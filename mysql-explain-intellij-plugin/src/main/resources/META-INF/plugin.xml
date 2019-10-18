@@ -1,9 +1,7 @@
 <idea-plugin>
     <id>io.github.newhoo.mysql-explain</id>
     <name>MySQL Explain</name>
-    <vendor email="huzunrong@gmail.com" url="https://github.com/newhoo/mysql-explain-intellij-plugin">
-        mysql-explain-intellij-plugin
-    </vendor>
+    <vendor email="huzunrong@gmail.com" url="https://github.com/newhoo/mysql-explain">mysql-explain</vendor>
 
     <description><![CDATA[
     <p>自动查看mysql执行计划</p>

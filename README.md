@@ -26,3 +26,6 @@ mysql.types=ALL
 # 非必填项：MySQL explain结果按[Extra]过滤，默认Using filesort,Using temporary，英文逗号分割，*打印所有
 mysql.extras=Using filesort,Using temporary
 ```
+
+## 示例
+![](./image/setting.png)
