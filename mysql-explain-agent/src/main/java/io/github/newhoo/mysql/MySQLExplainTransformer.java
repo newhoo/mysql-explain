@@ -24,6 +24,8 @@ public class MySQLExplainTransformer implements ClassFileTransformer {
             return classfileBuffer;
         }
 
+        System.out.println("mysql explain agent starting...");
+
         CtClass cl = null;
         try {
             ClassPool pool = ClassPool.getDefault();

@@ -1,5 +1,5 @@
 # MYSQL EXPLAIN
-auto execute mysql explain when execute sql
+auto execute mysql explain when execute sql. support `com.mysql.jdbc.PreparedStatement` statements.
 
 ## Main functions
 - auto print mysql explain result
