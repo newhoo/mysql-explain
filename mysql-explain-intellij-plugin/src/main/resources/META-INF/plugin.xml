@@ -1,0 +1,33 @@
+<idea-plugin>
+    <id>io.github.newhoo.mysql-explain</id>
+    <name>MySQL Explain</name>
+    <vendor email="huzunrong@gmail.com" url="https://github.com/newhoo/mysql-explain-intellij-plugin">
+        mysql-explain-intellij-plugin
+    </vendor>
+
+    <description><![CDATA[
+    <p>自动查看mysql执行计划</p>
+    <br/>
+    <p>auto execute mysql explain when execute sql</p>
+
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    -->
+    <depends>com.intellij.modules.java</depends>
+
+    <idea-version since-build="181.0"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <projectConfigurable instance="io.github.newhoo.mysql.setting.SettingConfigurable"/>
+
+        <java.programPatcher implementation="io.github.newhoo.mysql.MySQLAgentRunCheck"/>
+    </extensions>
+
+    <actions>
+        <!-- #e16531 -->
+    </actions>
+</idea-plugin>

@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.4.10'
+}
+
+group 'io.github.newhoo.mysql'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: 'lib', includes: ['*jar'])
+}
+
+intellij {
+    version '2018.1.7'
+    pluginName "mysql-explain"
+    updateSinceUntilBuild false
+    sandboxDirectory = "${rootProject.rootDir}/idea-sandbox"
+}
+
+patchPluginXml {
+    changeNotes """
+    <p>new plugin, just use it.</p>
+    """
+}
