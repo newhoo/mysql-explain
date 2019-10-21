@@ -16,24 +16,35 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_EXTRAS;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_FILTER;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_TYPES;
+import static java.util.stream.Collectors.toSet;
 
 /**
- * MySQLAgentRunCheck
+ * MysqlPreRunCheck
  *
  * @author huzunrong
  * @since 1.0
  */
-public class MySQLAgentRunCheck extends JavaProgramPatcher {
+public class MysqlPreRunCheck extends JavaProgramPatcher {
 
     private static final Logger logger = Logger.getInstance("mysql-explain");
+    private static final Set<String> SUPPORTED_RUN_CONFIGURATION = Stream.of(
+            "com.intellij.execution.application.ApplicationConfiguration",
+            "com.intellij.spring.boot.run.SpringBootApplicationRunConfiguration"
+    ).collect(toSet());
 
     @Override
     public void patchJavaParameters(Executor executor, RunProfile configuration, JavaParameters javaParameters) {
+        if (!SUPPORTED_RUN_CONFIGURATION.contains(configuration.getClass().getName())) {
+            return;
+        }
+
         if (configuration instanceof RunConfiguration) {
             RunConfiguration runConfiguration = (RunConfiguration) configuration;
             PluginProjectSetting pluginProjectSetting = new PluginProjectSetting(runConfiguration.getProject());
@@ -43,11 +54,11 @@ public class MySQLAgentRunCheck extends JavaProgramPatcher {
                     && findPsiClass("com.mysql.jdbc.PreparedStatement", runConfiguration.getProject()) != null) {
                 ParametersList vmParametersList = javaParameters.getVMParametersList();
 
-                String jrPluginPath = getAgentPath();
-                if (StringUtils.contains(jrPluginPath, " ")) {
-                    jrPluginPath = "\"" + jrPluginPath + "\"";
+                String agentPath = getAgentPath();
+                if (StringUtils.contains(agentPath, " ")) {
+                    agentPath = "\"" + agentPath + "\"";
                 }
-                vmParametersList.addParametersString("-javaagent:" + jrPluginPath);
+                vmParametersList.addParametersString("-javaagent:" + agentPath);
 
                 vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL, String.valueOf(pluginProjectSetting.getMysqlShowSql()));
                 vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_FILTER, pluginProjectSetting.getMysqlFilter());

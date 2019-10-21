@@ -18,7 +18,7 @@ public class MySQLExplainInstrumentation {
     public static void premain(String args, Instrumentation inst) {
         // print configuration
         Config.init();
-        System.out.println("mysql explain configurations: \n" + Config.getMySQLConfTable());
+        System.out.println("Mysql explain configurations: \n" + Config.getMySQLConfTable());
 
         // Instrumentation提供的addTransformer方法，在类加载时会回调ClassFileTransformer接口
         inst.addTransformer(new MySQLExplainTransformer());

@@ -18,7 +18,6 @@ dependencies {
 
 intellij {
     version '2018.1.7'
-    pluginName "mysql-explain"
     updateSinceUntilBuild false
     sandboxDirectory = "${rootProject.rootDir}/idea-sandbox"
 }

@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>io.github.newhoo.mysql-explain</id>
     <name>MySQL Explain</name>
-    <vendor email="huzunrong@gmail.com" url="https://github.com/newhoo/mysql-explain">mysql-explain</vendor>
+    <vendor email="huzunrong@gmail.com" url="https://github.com/newhoo/mysql-explain">MySQL Explain</vendor>
 
     <description><![CDATA[
     <p>自动查看mysql执行计划</p>
@@ -22,7 +22,7 @@
         <!-- Add your extensions here -->
         <projectConfigurable instance="io.github.newhoo.mysql.setting.SettingConfigurable"/>
 
-        <java.programPatcher implementation="io.github.newhoo.mysql.MySQLAgentRunCheck"/>
+        <java.programPatcher implementation="io.github.newhoo.mysql.MysqlPreRunCheck"/>
     </extensions>
 
     <actions>

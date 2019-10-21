@@ -2,8 +2,6 @@ package io.github.newhoo.mysql.explain;
 
 import io.github.newhoo.mysql.common.Constant;
 import io.github.newhoo.mysql.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -22,7 +20,6 @@ import static io.github.newhoo.mysql.common.Config.typeOptimizationItems;
  * @author zunrong
  */
 public final class MySQLExplain {
-    private static final Logger logger = LoggerFactory.getLogger(MySQLExplain.class);
 
     /**
      * 调用：MySQLExplainCBP#process
@@ -64,7 +61,8 @@ public final class MySQLExplain {
             // 打印结果
             analyzeResult(sql, explainResultList);
         } catch (Exception se) {
-            logger.error("EXPLAIN SQL异常:{}", se.toString(), se);
+            System.err.println("EXPLAIN SQL异常: " + se.toString());
+            se.printStackTrace();
         }
     }
 
@@ -74,16 +72,22 @@ public final class MySQLExplain {
     private static boolean processBefore(String sql) {
         String[] s = sql.substring(0, 10).split(" ", 2);
         if (StringUtils.isEmptyArray(s)) {
-            logger.warn("不支持的EXPLAIN: sql.split(\" \", 2) empty");
+            if (isDebug()) {
+                System.out.println("不支持的EXPLAIN: sql.split(\" \", 2) empty");
+            }
             return false;
         }
         if (StringUtils.containsAny(sql, filterSqlKeywords)) {
-            logger.debug("不支持的EXPLAIN - 关键词跳过: {}", Arrays.asList(filterSqlKeywords));
+            if (isDebug()) {
+                System.out.println("不支持的EXPLAIN - 关键词跳过: " + Arrays.asList(filterSqlKeywords));
+            }
             return false;
         }
         if (!Constant.SUPPORTED_EXPLAIN_SQL.contains(s[0])) {
             if (!s[0].startsWith("SELECT*") && !s[0].startsWith("select*")) {
-                logger.warn("不支持的EXPLAIN - 不支持的语句: {}, {}", s[0], Constant.SUPPORTED_EXPLAIN_SQL);
+                if (isDebug()) {
+                    System.out.println(("不支持的EXPLAIN - 不支持的语句: " + s[0] + ", " + Constant.SUPPORTED_EXPLAIN_SQL));
+                }
                 return false;
             }
         }
@@ -119,5 +123,9 @@ public final class MySQLExplain {
         if (needPrint) {
             ExplainHelper.printExplainResult(sql, explainResultList, showSQL);
         }
+    }
+
+    private static boolean isDebug() {
+        return System.getProperty("debug") != null;
     }
 }

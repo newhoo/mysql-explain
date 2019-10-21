@@ -17,14 +17,16 @@ import java.security.ProtectionDomain;
  */
 public class MySQLExplainTransformer implements ClassFileTransformer {
 
+    private static final String PREPARED_STATEMENT = "com/mysql/jdbc/PreparedStatement";
+
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
-        if (!"com/mysql/jdbc/PreparedStatement".equals(className)) {
+        if (!PREPARED_STATEMENT.equals(className)) {
             return classfileBuffer;
         }
 
-        System.out.println("mysql explain agent starting...");
+        System.out.println("Mysql explain agent starting...");
 
         CtClass cl = null;
         try {
@@ -39,7 +41,7 @@ public class MySQLExplainTransformer implements ClassFileTransformer {
 
             return cl.toBytecode();
         } catch (Exception e) {
-            System.err.println("mysql agent error: " + e.toString());
+            System.err.println("Mysql explain agent error: " + e.toString());
             e.printStackTrace();
         } finally {
             if (cl != null) {
