@@ -26,7 +26,7 @@ public class PluginProjectSetting {
     // mysql explain
 
     public boolean getEnableMySQLExplain() {
-        return propertiesComponent.getBoolean(KEY_MYSQL_EXPLAIN_ENABLE, Boolean.TRUE);
+        return propertiesComponent.getBoolean(KEY_MYSQL_EXPLAIN_ENABLE, Boolean.FALSE);
     }
 
     public void setEnableMySQLExplain(boolean enableMySQLExplain) {
