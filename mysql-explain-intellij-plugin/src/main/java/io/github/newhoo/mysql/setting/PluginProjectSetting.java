@@ -30,7 +30,7 @@ public class PluginProjectSetting {
     }
 
     public void setEnableMySQLExplain(boolean enableMySQLExplain) {
-        propertiesComponent.setValue(KEY_MYSQL_EXPLAIN_ENABLE, enableMySQLExplain, Boolean.TRUE);
+        propertiesComponent.setValue(KEY_MYSQL_EXPLAIN_ENABLE, enableMySQLExplain);
     }
 
     public boolean getMysqlShowSql() {
