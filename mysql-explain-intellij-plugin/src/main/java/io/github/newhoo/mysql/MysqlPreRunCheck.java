@@ -41,9 +41,9 @@ public class MysqlPreRunCheck extends JavaProgramPatcher {
 
     @Override
     public void patchJavaParameters(Executor executor, RunProfile configuration, JavaParameters javaParameters) {
-        if (!SUPPORTED_RUN_CONFIGURATION.contains(configuration.getClass().getName())) {
-            return;
-        }
+//        if (!SUPPORTED_RUN_CONFIGURATION.contains(configuration.getClass().getName())) {
+//            return;
+//        }
 
         if (configuration instanceof RunConfiguration) {
             RunConfiguration runConfiguration = (RunConfiguration) configuration;

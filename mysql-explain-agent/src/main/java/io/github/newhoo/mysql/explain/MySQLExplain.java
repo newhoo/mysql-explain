@@ -3,8 +3,7 @@ package io.github.newhoo.mysql.explain;
 import io.github.newhoo.mysql.common.Constant;
 import io.github.newhoo.mysql.util.StringUtils;
 
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,40 +22,49 @@ public final class MySQLExplain {
 
     /**
      * 调用：MySQLExplainCBP#process
+     *
+     * @param conn java.sql.Connection
+     * @param sql
      */
-    public static void explainSql(com.mysql.jdbc.MySQLConnection conn, com.mysql.jdbc.Buffer sendPacket) {
-        byte[] bytes = new byte[sendPacket.getPosition()];
-        System.arraycopy(sendPacket.getByteBuffer(), 0, bytes, 0, bytes.length);
-
-        String sql = new String(bytes, 5, bytes.length - 5);
+    public static void explainSql(Object conn, String sql) {
+        if (conn == null || sql == null) {
+            System.out.println(231312);
+            return;
+        }
         if (!processBefore(sql)) {
             return;
         }
-
         try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("EXPLAIN " + sql);
+            Method Connection_createStatement = conn.getClass().getMethod("createStatement");
+            Method Statement_executeQuery = Connection_createStatement.getReturnType().getMethod("executeQuery", String.class);
+            Method Statement_close = Connection_createStatement.getReturnType().getMethod("close");
+            Method ResultSet_next = Statement_executeQuery.getReturnType().getMethod("next");
+            Method ResultSet_getString = Statement_executeQuery.getReturnType().getMethod("getString", String.class);
+            Method ResultSet_close = Statement_executeQuery.getReturnType().getMethod("close");
+
+            Object stmt = Connection_createStatement.invoke(conn);
+            Object resultSet = Statement_executeQuery.invoke(stmt, "EXPLAIN " + sql);
 
             List<ExplainResultVo> explainResultList = new ArrayList<>();
-            while (rs.next()) {
+            while ((boolean) ResultSet_next.invoke(resultSet)) {
                 ExplainResultVo explainResultVo = new ExplainResultVo();
-                explainResultVo.setId(rs.getString("id"));
-                explainResultVo.setSelectType(rs.getString("select_type"));
-                explainResultVo.setTable(rs.getString("table"));
-                explainResultVo.setPartitions(rs.getString("partitions"));
-                explainResultVo.setType(rs.getString("type"));
-                explainResultVo.setPossibleKeys(rs.getString("possible_keys"));
-                explainResultVo.setKey(rs.getString("key"));
-                explainResultVo.setKeyLen(rs.getString("key_len"));
-                explainResultVo.setRef(rs.getString("ref"));
-                explainResultVo.setRows(rs.getString("rows"));
-                explainResultVo.setFiltered(rs.getString("filtered"));
-                explainResultVo.setExtra(rs.getString("Extra"));
+                explainResultVo.setId((String) ResultSet_getString.invoke(resultSet, "id"));
+                explainResultVo.setSelectType((String) ResultSet_getString.invoke(resultSet, "select_type"));
+                explainResultVo.setTable((String) ResultSet_getString.invoke(resultSet, "table"));
+                explainResultVo.setPartitions((String) ResultSet_getString.invoke(resultSet, "partitions"));
+                explainResultVo.setType((String) ResultSet_getString.invoke(resultSet, "type"));
+                explainResultVo.setPossibleKeys((String) ResultSet_getString.invoke(resultSet, "possible_keys"));
+                explainResultVo.setKey((String) ResultSet_getString.invoke(resultSet, "key"));
+                explainResultVo.setKeyLen((String) ResultSet_getString.invoke(resultSet, "key_len"));
+                explainResultVo.setRef((String) ResultSet_getString.invoke(resultSet, "ref"));
+                explainResultVo.setRows((String) ResultSet_getString.invoke(resultSet, "rows"));
+                explainResultVo.setFiltered((String) ResultSet_getString.invoke(resultSet, "filtered"));
+                explainResultVo.setExtra((String) ResultSet_getString.invoke(resultSet, "Extra"));
 
                 explainResultList.add(explainResultVo);
             }
-
-            rs.close();
+            ResultSet_close.invoke(resultSet);
+            Statement_close.invoke(stmt);
 
             // 打印结果
             analyzeResult(sql, explainResultList);

@@ -17,16 +17,18 @@ import java.security.ProtectionDomain;
  */
 public class MySQLExplainTransformer implements ClassFileTransformer {
 
-    private static final String PREPARED_STATEMENT = "com/mysql/jdbc/PreparedStatement";
+    private static final String MYSQL_PREPARED_STATEMENT = "com/mysql/jdbc/PreparedStatement";
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
-        if (!PREPARED_STATEMENT.equals(className)) {
+        if (!MYSQL_PREPARED_STATEMENT.equals(className)) {
             return classfileBuffer;
         }
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        System.out.println("Mysql explain agent starting... " + contextClassLoader);
 
-        System.out.println("Mysql explain agent starting...");
+//        return asmVisit(classfileBuffer);
 
         CtClass cl = null;
         try {
@@ -36,8 +38,8 @@ public class MySQLExplainTransformer implements ClassFileTransformer {
             pool.importPackage("io.github.newhoo.mysql.explain.MySQLExplain");
 
             CtMethod m = cl.getDeclaredMethod("executeInternal");
-
-            m.insertBefore("{ MySQLExplain.explainSql(this.connection, $2); }");
+            m.insertBefore(
+                    "{ try { MySQLExplain.explainSql(getConnection(), asSql()); } catch (Exception e) {System.out.println(\"insertBefore Error: \"+e.toString()); } }");
 
             return cl.toBytecode();
         } catch (Exception e) {
