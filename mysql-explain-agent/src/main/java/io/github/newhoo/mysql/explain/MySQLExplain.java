@@ -28,7 +28,6 @@ public final class MySQLExplain {
      */
     public static void explainSql(Object conn, String sql) {
         if (conn == null || sql == null) {
-            System.out.println(231312);
             return;
         }
         if (!processBefore(sql)) {

@@ -24,6 +24,7 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-    <p>new plugin, just use it.</p>
+    <p>supported tomcat app</p>
+    <p>支持<tomcat应用/p>
     """
 }

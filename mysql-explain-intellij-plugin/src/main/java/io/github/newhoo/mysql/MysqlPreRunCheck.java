@@ -16,14 +16,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_EXTRAS;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_FILTER;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_TYPES;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * MysqlPreRunCheck
@@ -34,17 +33,9 @@ import static java.util.stream.Collectors.toSet;
 public class MysqlPreRunCheck extends JavaProgramPatcher {
 
     private static final Logger logger = Logger.getInstance("mysql-explain");
-    private static final Set<String> SUPPORTED_RUN_CONFIGURATION = Stream.of(
-            "com.intellij.execution.application.ApplicationConfiguration",
-            "com.intellij.spring.boot.run.SpringBootApplicationRunConfiguration"
-    ).collect(toSet());
 
     @Override
     public void patchJavaParameters(Executor executor, RunProfile configuration, JavaParameters javaParameters) {
-//        if (!SUPPORTED_RUN_CONFIGURATION.contains(configuration.getClass().getName())) {
-//            return;
-//        }
-
         if (configuration instanceof RunConfiguration) {
             RunConfiguration runConfiguration = (RunConfiguration) configuration;
             PluginProjectSetting pluginProjectSetting = new PluginProjectSetting(runConfiguration.getProject());
@@ -61,7 +52,7 @@ public class MysqlPreRunCheck extends JavaProgramPatcher {
                 vmParametersList.addParametersString("-javaagent:" + agentPath);
 
                 vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL, String.valueOf(pluginProjectSetting.getMysqlShowSql()));
-                vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_FILTER, pluginProjectSetting.getMysqlFilter());
+                vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_FILTER, base64Encode(pluginProjectSetting.getMysqlFilter()));
                 vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_TYPES, pluginProjectSetting.getMysqlTypes());
                 vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_EXTRAS, pluginProjectSetting.getMysqlExtras());
             }
@@ -109,5 +100,12 @@ public class MysqlPreRunCheck extends JavaProgramPatcher {
             }
         }
         return null;
+    }
+
+    private static String base64Encode(String str) {
+        if (StringUtils.isBlank(str)) {
+            return str;
+        }
+        return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
     }
 }

@@ -22,6 +22,7 @@ import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_EXTRAS
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_FILTER;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_TYPES;
+import static io.github.newhoo.mysql.util.StringUtils.base64Decode;
 import static io.github.newhoo.mysql.util.StringUtils.putSplit;
 
 /**
@@ -65,7 +66,7 @@ public final class Config {
         // filter
         Set<String> filterSqlKeywordSet = new HashSet<>();
         putSplit(filterSqlKeywordSet, properties.getProperty(PROPERTIES_KEY_MYSQL_FILTER, ""));
-        putSplit(filterSqlKeywordSet, System.getProperty(PROPERTIES_KEY_MYSQL_FILTER));
+        putSplit(filterSqlKeywordSet, base64Decode(System.getProperty(PROPERTIES_KEY_MYSQL_FILTER)));
         filterSqlKeywords = filterSqlKeywordSet.toArray(new String[0]);
 
         // 优化项：type

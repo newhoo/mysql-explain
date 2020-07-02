@@ -1,7 +1,9 @@
 package io.github.newhoo.mysql.util;
 
 import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
@@ -58,6 +60,17 @@ public class StringUtils {
         List<String> strings = Arrays.asList(str.split(","));
         if (!strings.isEmpty()) {
             collection.addAll(strings);
+        }
+    }
+
+    public static String base64Decode(String str) {
+        if (isEmpty(str)) {
+            return str;
+        }
+        try {
+            return new String(Base64.getDecoder().decode(str), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return str;
         }
     }
 }
