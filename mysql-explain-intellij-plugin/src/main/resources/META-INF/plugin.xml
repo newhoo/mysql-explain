@@ -4,9 +4,9 @@
     <vendor email="huzunrong@foxmail.com" url="https://github.com/huzunrong/mysql-explain">MySQL Explain</vendor>
 
     <description><![CDATA[
-    <p>自动查看mysql执行计划</p>
+    <li>auto execute mysql explain when execute sql</li>
     <br/>
-    <p>auto execute mysql explain when execute sql</p>
+    <li>自动查看mysql执行计划</li>
 
     ]]></description>
 

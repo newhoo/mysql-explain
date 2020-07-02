@@ -24,7 +24,10 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-    <p>supported tomcat app</p>
-    <p>支持<tomcat应用/p>
+    <li>remove javassist, use ASM from jdk internal</li>
+    <li>supported tomcat app</li>
+    <br/>
+    <li>去除javassist，改用jdk内置的ASM</li>
+    <li>支持tomcat应用</li>
     """
 }
