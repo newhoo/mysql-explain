@@ -67,7 +67,11 @@ public class MysqlPreRunCheck extends JavaProgramPatcher {
         if (resource != null && "jar".equals(resource.getProtocol())) {
             String path = resource.getPath();
             try {
-                return URLDecoder.decode(path.substring("file:/".length() - 1, path.indexOf("!/")), "UTF-8");
+                String decodePath = URLDecoder.decode(path.substring("file:/".length() - 1, path.indexOf("!/")), "UTF-8");
+                if (decodePath.contains(":")) {
+                    decodePath = decodePath.substring(1);
+                }
+                return decodePath;
             } catch (Exception e) {
                 logger.error("URLDecoder Exception: " + resource.getPath(), e);
             }
