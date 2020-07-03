@@ -1,14 +1,32 @@
 <idea-plugin>
     <id>io.github.newhoo.mysql-explain</id>
     <name>MySQL Explain</name>
-    <vendor email="huzunrong@foxmail.com" url="https://github.com/huzunrong/mysql-explain">MySQL Explain</vendor>
+    <vendor email="huzunrong@foxmail.com" url="https://github.com/huzunrong/mysql-explain">huzunrong</vendor>
 
     <description><![CDATA[
-    <li>auto execute mysql explain when execute sql</li>
-    <br/>
-    <li>自动查看mysql执行计划</li>
-
+    <ul>
+        <li>auto execute mysql explain when execute sql</li>
+        <br/>
+        <li>自动查看mysql执行计划</li>
+    </ul>
     ]]></description>
+
+    <change-notes><![CDATA[
+        1.0.1
+        <ul>
+            <li>remove javassist, use ASM from jdk internal</li>
+            <li>supported tomcat app</li>
+            <br/>
+            <li>去除javassist，改用jdk内置的ASM</li>
+            <li>支持tomcat应用</li>
+        </ul>
+
+        1.0.0
+        <ul>
+            <li>new plugin, just use it.</li>
+        </ul>
+      ]]>
+    </change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->

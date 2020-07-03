@@ -21,13 +21,3 @@ intellij {
     updateSinceUntilBuild false
     sandboxDirectory = "${rootProject.rootDir}/idea-sandbox"
 }
-
-patchPluginXml {
-    changeNotes """
-    <li>remove javassist, use ASM from jdk internal</li>
-    <li>supported tomcat app</li>
-    <br/>
-    <li>去除javassist，改用jdk内置的ASM</li>
-    <li>支持tomcat应用</li>
-    """
-}
