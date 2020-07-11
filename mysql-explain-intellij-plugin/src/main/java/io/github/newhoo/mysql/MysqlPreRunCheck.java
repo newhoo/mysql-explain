@@ -41,8 +41,7 @@ public class MysqlPreRunCheck extends JavaProgramPatcher {
             PluginProjectSetting pluginProjectSetting = new PluginProjectSetting(runConfiguration.getProject());
 
             logger.info("检查mysql explain agent启用状态");
-            if (pluginProjectSetting.getEnableMySQLExplain()
-                    && findPsiClass("com.mysql.jdbc.PreparedStatement", runConfiguration.getProject()) != null) {
+            if (pluginProjectSetting.getEnableMySQLExplain() && existMysqlJar(runConfiguration.getProject())) {
                 ParametersList vmParametersList = javaParameters.getVMParametersList();
 
                 String agentPath = getAgentPath();
@@ -77,6 +76,11 @@ public class MysqlPreRunCheck extends JavaProgramPatcher {
             }
         }
         return "";
+    }
+
+    private static boolean existMysqlJar(Project project) {
+        return findPsiClass("com.mysql.jdbc.Driver", project) != null
+                || findPsiClass("com.mysql.cj.jdbc.Driver", project) != null;
     }
 
     /**

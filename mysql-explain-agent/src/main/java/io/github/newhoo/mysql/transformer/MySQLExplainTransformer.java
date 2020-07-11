@@ -1,4 +1,4 @@
-package io.github.newhoo.mysql;
+package io.github.newhoo.mysql.transformer;
 
 //import javassist.ClassPool;
 //import javassist.CtClass;
@@ -35,8 +35,6 @@ public class MySQLExplainTransformer implements ClassFileTransformer {
         if (!MYSQL_PREPARED_STATEMENT.equals(className)) {
             return classfileBuffer;
         }
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        System.out.println("Mysql explain agent starting... " + contextClassLoader);
 
         byte[] asmVisit = asmVisit(classfileBuffer);
 //        byte[] assistVisit = assistVisit(classfileBuffer);
@@ -104,46 +102,29 @@ public class MySQLExplainTransformer implements ClassFileTransformer {
                 if (!"executeInternal".equals(name)) {
                     return mv;
                 }
-                System.out.println("visit method: " + name + "  ===  " + descriptor + "  ===  " + signature + "  ===  " + exceptions);
+                System.out.println("[mysql] visit method: " + name + "  ===  " + descriptor + "  ===  " + signature + "  ===  " + exceptions);
 
                 return new AdviceAdapter(Opcodes.ASM5, mv, access, name, descriptor) {
                     @Override
                     protected void onMethodEnter() {
                         super.onMethodEnter();
                         mv.visitVarInsn(Opcodes.ALOAD, 0);
-                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "com/mysql/jdbc/PreparedStatement", "getConnection",
-                                "()Ljava/sql/Connection;", false);
+                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "com/mysql/jdbc/PreparedStatement", "getConnection", "()Ljava/sql/Connection;", false);
                         mv.visitVarInsn(Opcodes.ALOAD, 0);
-                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "com/mysql/jdbc/PreparedStatement", "asSql", "()Ljava/lang/String;",
-                                false);
-                        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "io/github/newhoo/mysql/explain/MySQLExplain", "explainSql",
-                                "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "com/mysql/jdbc/PreparedStatement", "asSql", "()Ljava/lang/String;", false);
+                        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "io/github/newhoo/mysql/explain/MySQLExplain", "explainSql", "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                     }
 
-                    @Override
-                    protected void onMethodExit(int opcode) {
-                        mv.visitMaxs(11, 17);
-                        super.onMethodExit(opcode);
-                    }
+//                    @Override
+//                    protected void onMethodExit(int opcode) {
+//                        mv.visitMaxs(11, 17);
+//                        super.onMethodExit(opcode);
+//                    }
                 };
             }
         };
 
         cr.accept(cv, 0);
-
-        byte[] bytes = cw.toByteArray();
-
-//        try {
-//            System.out.println(2222222);
-//            ///Users/zunrong/.m2/repository/mysql/mysql-connector-java/5.1.47/mysql-connector-java-5.1.47-sources.jar!/com/mysql/jdbc/PreparedStatement.java
-//            new FileOutputStream(
-//                    "/Users/zunrong/OtherJavaProjects/plugin/mysql-explain/mysql-explain-agent/target/PreparedStatement2.class")
-//                    .write(bytes);
-//            System.out.println(33333333);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        System.out.println(4444444);
-        return bytes;
+        return cw.toByteArray();
     }
 }

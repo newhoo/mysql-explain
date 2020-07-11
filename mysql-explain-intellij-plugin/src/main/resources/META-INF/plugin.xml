@@ -12,6 +12,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        1.0.2
+        <ul>
+            <li>support mysql 8</li>
+        </ul>
+
         1.0.1
         <ul>
             <li>remove javassist, use ASM from jdk internal</li>

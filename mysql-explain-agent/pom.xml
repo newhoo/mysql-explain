@@ -21,7 +21,8 @@
 <!--        <dependency>-->
 <!--            <groupId>mysql</groupId>-->
 <!--            <artifactId>mysql-connector-java</artifactId>-->
-<!--            <version>5.1.47</version>-->
+<!--&lt;!&ndash;            <version>5.1.47</version>&ndash;&gt;-->
+<!--            <version>8.0.20</version>-->
 <!--            <scope>provided</scope>-->
 <!--        </dependency>-->
 <!--        <dependency>-->

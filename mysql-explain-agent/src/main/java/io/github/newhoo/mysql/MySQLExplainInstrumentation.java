@@ -1,6 +1,8 @@
 package io.github.newhoo.mysql;
 
 import io.github.newhoo.mysql.common.Config;
+import io.github.newhoo.mysql.transformer.MySQL8ExplainTransformer;
+import io.github.newhoo.mysql.transformer.MySQLExplainTransformer;
 
 import java.lang.instrument.Instrumentation;
 
@@ -22,5 +24,6 @@ public class MySQLExplainInstrumentation {
 
         // Instrumentation提供的addTransformer方法，在类加载时会回调ClassFileTransformer接口
         inst.addTransformer(new MySQLExplainTransformer());
+        inst.addTransformer(new MySQL8ExplainTransformer());
     }
 }
