@@ -30,6 +30,7 @@ public final class MySQLExplain {
         if (conn == null || sql == null) {
             return;
         }
+        // 前置处理：条件过滤，打印日志等
         if (!processBefore(sql)) {
             return;
         }
@@ -50,14 +51,17 @@ public final class MySQLExplain {
                 explainResultVo.setId((String) ResultSet_getString.invoke(resultSet, "id"));
                 explainResultVo.setSelectType((String) ResultSet_getString.invoke(resultSet, "select_type"));
                 explainResultVo.setTable((String) ResultSet_getString.invoke(resultSet, "table"));
-                explainResultVo.setPartitions((String) ResultSet_getString.invoke(resultSet, "partitions"));
+                try {
+                    explainResultVo.setPartitions((String) ResultSet_getString.invoke(resultSet, "partitions"));
+                    explainResultVo.setFiltered((String) ResultSet_getString.invoke(resultSet, "filtered"));
+                } catch (Exception ignored) {
+                }
                 explainResultVo.setType((String) ResultSet_getString.invoke(resultSet, "type"));
                 explainResultVo.setPossibleKeys((String) ResultSet_getString.invoke(resultSet, "possible_keys"));
                 explainResultVo.setKey((String) ResultSet_getString.invoke(resultSet, "key"));
                 explainResultVo.setKeyLen((String) ResultSet_getString.invoke(resultSet, "key_len"));
                 explainResultVo.setRef((String) ResultSet_getString.invoke(resultSet, "ref"));
                 explainResultVo.setRows((String) ResultSet_getString.invoke(resultSet, "rows"));
-                explainResultVo.setFiltered((String) ResultSet_getString.invoke(resultSet, "filtered"));
                 explainResultVo.setExtra((String) ResultSet_getString.invoke(resultSet, "Extra"));
 
                 explainResultList.add(explainResultVo);

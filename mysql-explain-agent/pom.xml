@@ -16,7 +16,7 @@
 <!--        <dependency>-->
 <!--            <groupId>org.javassist</groupId>-->
 <!--            <artifactId>javassist</artifactId>-->
-<!--            <version>3.25.0-GA</version>-->
+<!--            <version>3.27.0-GA</version>-->
 <!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>mysql</groupId>-->
@@ -38,8 +38,6 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -87,6 +85,41 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            &lt;!&ndash; <minimizeJar>true</minimizeJar> &ndash;&gt;
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>with-dependencies</shadedClassifierName>
+                            <relocations>
+                                <relocation>
+                                    <pattern>javassist</pattern>
+                                    <shadedPattern>internal.javassist</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        &lt;!&ndash; <Agent-Class>com.ex.javassist.agent1.TestAgent</Agent-Class> &ndash;&gt;
+                                        <Premain-Class>io.github.newhoo.mysql.MySQLExplainInstrumentation</Premain-Class>
+                                        <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                                        <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
         </plugins>
     </build>
 </project>

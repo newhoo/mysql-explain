@@ -12,6 +12,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        1.0.3
+        <ul>
+            <li>Fix mysql 5.6.40 compatibility issue</li>
+        </ul>
+
         1.0.2
         <ul>
             <li>support mysql 8</li>
