@@ -11,6 +11,8 @@ import com.intellij.openapi.project.Project;
  */
 public class PluginProjectSetting {
 
+    private static final String KEY_AGENT_PATH = "mysql-explain.agentPath";
+    private static final String KEY_EXIST_MYSQL_JAR = "mysql-explain.existMysqlJar";
     private static final String KEY_MYSQL_EXPLAIN_ENABLE = "mysql-explain.enableMySQLExplain";
     private static final String KEY_MYSQL_SHOW_SQL = "mysql-explain.mysql.showSQL";
     private static final String KEY_MYSQL_FILTER = "mysql-explain.mysql.filter";
@@ -23,7 +25,22 @@ public class PluginProjectSetting {
         this.propertiesComponent = PropertiesComponent.getInstance(project);
     }
 
-    // mysql explain
+
+    public boolean getExistMysqlJar() {
+        return propertiesComponent.getBoolean(KEY_EXIST_MYSQL_JAR, Boolean.FALSE);
+    }
+
+    public void setExistMysqlJar(boolean existMysqlJar) {
+        propertiesComponent.setValue(KEY_EXIST_MYSQL_JAR, existMysqlJar);
+    }
+
+    public String getAgentPath() {
+        return propertiesComponent.getValue(KEY_AGENT_PATH);
+    }
+
+    public void setAgentPath(String agentPath) {
+        propertiesComponent.setValue(KEY_AGENT_PATH, agentPath);
+    }
 
     public boolean getEnableMySQLExplain() {
         return propertiesComponent.getBoolean(KEY_MYSQL_EXPLAIN_ENABLE, Boolean.FALSE);

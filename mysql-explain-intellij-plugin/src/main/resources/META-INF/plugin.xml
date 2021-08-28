@@ -12,6 +12,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        1.0.4
+        <ul>
+            <li>fix bugs with 2021.2</li>
+        </ul>
+
         1.0.3
         <ul>
             <li>Fix mysql 5.6.40 compatibility issue</li>
@@ -48,6 +53,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <postStartupActivity implementation="io.github.newhoo.mysql.MyStartupActivity"/>
         <projectConfigurable instance="io.github.newhoo.mysql.setting.SettingConfigurable"/>
 
         <java.programPatcher implementation="io.github.newhoo.mysql.MysqlPreRunCheck"/>
