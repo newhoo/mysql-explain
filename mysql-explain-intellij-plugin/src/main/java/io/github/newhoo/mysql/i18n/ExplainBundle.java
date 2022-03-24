@@ -1,7 +1,5 @@
 package io.github.newhoo.mysql.i18n;
 
-import com.intellij.CommonBundle;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -27,7 +25,7 @@ public class ExplainBundle {
         return resourceBundle.getString(key).trim();
     }
 
-    public static String message(String key, Object... params) {
-        return CommonBundle.message(resourceBundle, key, params).trim();
-    }
+//    public static String message(String key, Object... params) {
+//        return CommonBundle.message(resourceBundle, key, params).trim();
+//    }
 }
