@@ -12,9 +12,14 @@
     ]]></description>
 
     <change-notes><![CDATA[
-        1.0.5
+        1.0.6
         <ul>
             <li>fix bugs</li>
+        </ul>
+
+        1.0.5
+        <ul>
+            <li>support i18n</li>
         </ul>
 
         1.0.4

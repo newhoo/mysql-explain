@@ -32,7 +32,7 @@
               <toolTipText value="会根据下述条件过滤"/>
             </properties>
           </component>
-          <component id="16438" class="javax.swing.JLabel">
+          <component id="16438" class="javax.swing.JLabel" binding="preFilterLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -51,7 +51,7 @@
               <toolTipText value=""/>
             </properties>
           </component>
-          <component id="3090" class="javax.swing.JLabel">
+          <component id="3090" class="javax.swing.JLabel" binding="preFilterTipLabel">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -64,7 +64,7 @@
               <text value="按关键词匹配，英文逗号分割，比如：QRTZ_,COUNT(0)"/>
             </properties>
           </component>
-          <component id="c418f" class="javax.swing.JLabel">
+          <component id="c418f" class="javax.swing.JLabel" binding="filterByTypeLabel">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -83,7 +83,7 @@
               <toolTipText value=""/>
             </properties>
           </component>
-          <component id="74452" class="javax.swing.JLabel">
+          <component id="74452" class="javax.swing.JLabel" binding="filterByTypeTipLabel">
             <constraints>
               <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -94,7 +94,7 @@
               <text value="&lt;html&gt;默认ALL，英文逗号分割，*打印所有。&lt;br/&gt;范围：system &gt; const &gt; eq_ref &gt; ref &gt; range &gt; index &gt; ALL&lt;/html&gt;"/>
             </properties>
           </component>
-          <component id="d2e8e" class="javax.swing.JLabel">
+          <component id="d2e8e" class="javax.swing.JLabel" binding="filterByExtraLabel">
             <constraints>
               <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -118,7 +118,7 @@
               <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <component id="a5c05" class="javax.swing.JLabel">
+          <component id="a5c05" class="javax.swing.JLabel" binding="filterByExtraTipLabel">
             <constraints>
               <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
