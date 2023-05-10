@@ -38,6 +38,10 @@ public class MyStartupActivity implements StartupActivity {
                 ApplicationManager.getApplication().runReadAction(() -> {
                     boolean existMysqlJar = existMysqlJar(project);
                     setting.setExistMysqlJar(existMysqlJar);
+
+                    if (StringUtils.isNotEmpty(setting.getAgentPath()) && !new File(setting.getAgentPath()).exists()) {
+                        setting.setAgentPath(null);
+                    }
                     if (existMysqlJar && StringUtils.isEmpty(setting.getAgentPath())) {
                         AppExecutorUtil.getAppExecutorService().execute(() -> {
                             getAgentPath("io.github.newhoo.mysql-explain", "mysql-explain-agent")

@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>io.github.newhoo.mysql-explain</id>
     <name>MySQL Explain</name>
-    <vendor email="huzunrong@foxmail.com" url="https://github.com/huzunrong/mysql-explain">huzunrong</vendor>
+    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/mysql-explain">huzunrong</vendor>
 
     <description><![CDATA[
     <ul>
@@ -12,6 +12,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        1.0.5
+        <ul>
+            <li>fix bugs</li>
+        </ul>
+
         1.0.4
         <ul>
             <li>fix bugs with 2021.2</li>

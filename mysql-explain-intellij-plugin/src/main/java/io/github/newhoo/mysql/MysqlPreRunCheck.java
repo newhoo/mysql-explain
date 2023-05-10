@@ -12,11 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_EXTRAS;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_FILTER;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_TYPES;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * MysqlPreRunCheck
@@ -27,10 +30,16 @@ import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_TYPES;
 public class MysqlPreRunCheck extends JavaProgramPatcher {
 
     private static final Logger logger = Logger.getInstance("mysql-explain");
+    private static final Set<String> NOT_SUPPORTED_RUN_CONFIGURATION = Stream.of(
+            "org.jetbrains.idea.maven.execution.MavenRunConfiguration"
+    ).collect(toSet());
 
     @Override
     public void patchJavaParameters(Executor executor, RunProfile configuration, JavaParameters javaParameters) {
         if (configuration instanceof RunConfiguration) {
+            if (NOT_SUPPORTED_RUN_CONFIGURATION.contains(configuration.getClass().getName())) {
+                return;
+            }
             RunConfiguration runConfiguration = (RunConfiguration) configuration;
             PluginProjectSetting setting = new PluginProjectSetting(runConfiguration.getProject());
 
