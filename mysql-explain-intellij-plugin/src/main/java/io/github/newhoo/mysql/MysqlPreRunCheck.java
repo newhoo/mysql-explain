@@ -10,14 +10,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import io.github.newhoo.mysql.setting.PluginProjectSetting;
 import org.apache.commons.lang3.StringUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_EXTRAS;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_FILTER;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL;
+import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER;
 import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_TYPES;
 import static java.util.stream.Collectors.toSet;
 
@@ -43,30 +42,27 @@ public class MysqlPreRunCheck extends JavaProgramPatcher {
             RunConfiguration runConfiguration = (RunConfiguration) configuration;
             PluginProjectSetting setting = new PluginProjectSetting(runConfiguration.getProject());
 
-            logger.info("检查mysql explain agent启用状态");
-            if (setting.getEnableMySQLExplain() && setting.getExistMysqlJar()) {
+            logger.info("Check mysql explain plugin status.");
+            if (setting.getEnableMySQLExplain()) {
+                if (!setting.getExistMysqlJar()) {
+                    logger.info("Can't found mysql driver in the classpath, please check your project.");
+                    return;
+                }
                 ParametersList vmParametersList = javaParameters.getVMParametersList();
 
                 String agentPath = setting.getAgentPath();
                 if (StringUtils.isNotEmpty(agentPath)) {
-                    if (StringUtils.contains(agentPath, " ")) {
-                        agentPath = "\"" + agentPath + "\"";
-                    }
-                    vmParametersList.addParametersString("-javaagent:" + agentPath);
+                    vmParametersList.addParametersString("\"-javaagent:" + agentPath + "\"");
 
                     vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL, String.valueOf(setting.getMysqlShowSql()));
-                    vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_FILTER, base64Encode(setting.getMysqlFilter()));
+                    vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER, setting.getPrintSqlFilter());
+                    vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_FILTER, setting.getMysqlFilter());
                     vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_TYPES, setting.getMysqlTypes());
                     vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_EXTRAS, setting.getMysqlExtras());
+
+                    logger.info("run parameters: " + vmParametersList);
                 }
             }
         }
-    }
-
-    private static String base64Encode(String str) {
-        if (StringUtils.isBlank(str)) {
-            return str;
-        }
-        return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
     }
 }

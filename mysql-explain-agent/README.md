@@ -1,3 +1,3 @@
 # mysql-explain-agent
 
-java agent, can use individually.
+java agent, can use independently.

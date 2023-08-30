@@ -36,18 +36,26 @@ public class MyStartupActivity implements StartupActivity {
                 PluginProjectSetting setting = new PluginProjectSetting(project);
 
                 ApplicationManager.getApplication().runReadAction(() -> {
-                    boolean existMysqlJar = existMysqlJar(project);
-                    setting.setExistMysqlJar(existMysqlJar);
-
-                    if (StringUtils.isNotEmpty(setting.getAgentPath()) && !new File(setting.getAgentPath()).exists()) {
-                        setting.setAgentPath(null);
+                    if (StringUtils.isNotEmpty(setting.getAgentPath())) {
+                        if (!StringUtils.contains(setting.getAgentPath(), "mysql-explain-agent-1.1.0-jar-with-dependencies.jar")) {
+                            setting.setAgentPath(null);
+                        } else if (!new File(setting.getAgentPath()).exists()) {
+                            setting.setAgentPath(null);
+                        }
                     }
-                    if (existMysqlJar && StringUtils.isEmpty(setting.getAgentPath())) {
+                    if (StringUtils.isEmpty(setting.getAgentPath())) {
                         AppExecutorUtil.getAppExecutorService().execute(() -> {
                             getAgentPath("io.github.newhoo.mysql-explain", "mysql-explain-agent")
-                                    .ifPresent(setting::setAgentPath);
+                                    .ifPresent(s -> {
+                                        System.out.println("[mysql-explain] set agent path: " + s);
+                                        setting.setAgentPath(s);
+                                    });
                         });
                     }
+
+                    boolean existMysqlJar = existMysqlJar(project);
+                    System.out.println("[mysql-explain] check exists mysql connector driver: " + existMysqlJar);
+                    setting.setExistMysqlJar(existMysqlJar);
                 });
             }
         });
@@ -81,7 +89,7 @@ public class MyStartupActivity implements StartupActivity {
      * 查找类
      *
      * @param typeCanonicalText 参数类型全限定名称
-     * @param project 当前project
+     * @param project           当前project
      * @return 查找到的类
      */
     private static PsiClass findPsiClass(String typeCanonicalText, Project project) {

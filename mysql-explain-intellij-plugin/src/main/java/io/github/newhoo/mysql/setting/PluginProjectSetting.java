@@ -15,6 +15,7 @@ public class PluginProjectSetting {
     private static final String KEY_EXIST_MYSQL_JAR = "mysql-explain.existMysqlJar";
     private static final String KEY_MYSQL_EXPLAIN_ENABLE = "mysql-explain.enableMySQLExplain";
     private static final String KEY_MYSQL_SHOW_SQL = "mysql-explain.mysql.showSQL";
+    private static final String KEY_MYSQL_PRINT_SQL_FILTER = "mysql-explain.mysql.showSQL.filter";
     private static final String KEY_MYSQL_FILTER = "mysql-explain.mysql.filter";
     private static final String KEY_MYSQL_TYPES = "mysql-explain.mysql.types";
     private static final String KEY_MYSQL_EXTRAS = "mysql-explain.mysql.extras";
@@ -58,8 +59,16 @@ public class PluginProjectSetting {
         propertiesComponent.setValue(KEY_MYSQL_SHOW_SQL, mysqlShowSql, Boolean.FALSE);
     }
 
+    public String getPrintSqlFilter() {
+        return propertiesComponent.getValue(KEY_MYSQL_PRINT_SQL_FILTER, "");
+    }
+
+    public void setPrintSqlFilter(String printSqlFilter) {
+        propertiesComponent.setValue(KEY_MYSQL_PRINT_SQL_FILTER, printSqlFilter);
+    }
+
     public String getMysqlFilter() {
-        return propertiesComponent.getValue(KEY_MYSQL_FILTER, "QRTZ_,COUNT(0)");
+        return propertiesComponent.getValue(KEY_MYSQL_FILTER, "INSERT,UPDATE,DELETE");
     }
 
     public void setMysqlFilter(String mysqlFilter) {

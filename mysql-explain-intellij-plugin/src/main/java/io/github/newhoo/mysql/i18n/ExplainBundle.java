@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
  */
 public class ExplainBundle {
 
-    private static ResourceBundle resourceBundle = ResourceBundle.getBundle("messages.explain", getLocale());
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("messages.explain", getLocale());
 
     private static Locale getLocale() {
         String lang = Locale.getDefault().getLanguage();

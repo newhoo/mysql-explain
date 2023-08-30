@@ -1,6 +1,8 @@
 package io.github.newhoo.mysql.explain;
 
+import io.github.newhoo.mysql.common.Config;
 import io.github.newhoo.mysql.common.Constant;
+import io.github.newhoo.mysql.common.Log;
 import io.github.newhoo.mysql.util.StringUtils;
 
 import java.lang.reflect.Method;
@@ -24,17 +26,31 @@ public final class MySQLExplain {
      * 调用：MySQLExplainCBP#process
      *
      * @param conn java.sql.Connection
-     * @param sql
+     * @param sql  sql string
      */
     public static void explainSql(Object conn, String sql) {
         if (conn == null || sql == null) {
             return;
         }
-        // 前置处理：条件过滤，打印日志等
-        if (!processBefore(sql)) {
-            return;
+        Log.debug("before explain: %s, %s", conn, sql);
+        // 2023-08-23 8.x 特殊处理，使用toString()获取
+        if (sql.startsWith("com.mysql.cj.jdbc.ClientPreparedStatement: ")) {
+            sql = sql.replace("com.mysql.cj.jdbc.ClientPreparedStatement: ", "");
         }
+
+        // 打印SQL
+        boolean printSQL = false;
+        if (Config.showSQL && !StringUtils.containsAny(sql, Config.showSQLFilterKeywords)) {
+            printSQL = true;
+            ExplainHelper.printSQL(sql, Config.showSQL);
+        }
+
         try {
+            // 前置处理：条件过滤，打印日志等
+            if (!processBefore(sql)) {
+                return;
+            }
+
             Method Connection_createStatement = conn.getClass().getMethod("createStatement");
             Method Statement_executeQuery = Connection_createStatement.getReturnType().getMethod("executeQuery", String.class);
             Method Statement_close = Connection_createStatement.getReturnType().getMethod("close");
@@ -70,10 +86,9 @@ public final class MySQLExplain {
             Statement_close.invoke(stmt);
 
             // 打印结果
-            analyzeResult(sql, explainResultList);
+            analyzeResult(sql, explainResultList, printSQL);
         } catch (Exception se) {
-            System.err.println("EXPLAIN SQL异常: " + se.toString());
-            se.printStackTrace();
+            Log.error(se, "exception: %s\n[%s]", se.toString(), sql);
         }
     }
 
@@ -83,60 +98,47 @@ public final class MySQLExplain {
     private static boolean processBefore(String sql) {
         String[] s = sql.substring(0, 10).split(" ", 2);
         if (StringUtils.isEmptyArray(s)) {
-            if (isDebug()) {
-                System.out.println("不支持的EXPLAIN: sql.split(\" \", 2) empty");
-            }
+            Log.debug("unsupported explain: sql.split(\" \", 2) return empty");
             return false;
         }
         if (StringUtils.containsAny(sql, filterSqlKeywords)) {
-            if (isDebug()) {
-                System.out.println("不支持的EXPLAIN - 关键词跳过: " + Arrays.asList(filterSqlKeywords));
-            }
+            Log.debug("unsupported explain - filter out by [type] keywords: %s", Arrays.asList(filterSqlKeywords));
             return false;
         }
         if (!Constant.SUPPORTED_EXPLAIN_SQL.contains(s[0])) {
+            // select*,id from t_api;
             if (!s[0].startsWith("SELECT*") && !s[0].startsWith("select*")) {
-                if (isDebug()) {
-                    System.out.println(("不支持的EXPLAIN - 不支持的语句: " + s[0] + ", " + Constant.SUPPORTED_EXPLAIN_SQL));
-                }
+                Log.debug("unsupported explain - start word not in: %s, %s", s[0], Constant.SUPPORTED_EXPLAIN_SQL);
                 return false;
             }
         }
-
-        // 打印SQL
-        ExplainHelper.printSQL(sql, showSQL);
         return true;
     }
 
     /**
      * 分析结果
      */
-    private static void analyzeResult(String sql, List<ExplainResultVo> explainResultList) {
+    private static void analyzeResult(String sql, List<ExplainResultVo> explainResultList, boolean printSQL) {
         boolean needPrint = false;
 
-        for (ExplainResultVo resultVo : explainResultList) {
-            if (StringUtils.containsAny(resultVo.getType(), typeOptimizationItems)) {
-                needPrint = true;
-                break;
-            }
-            if (StringUtils.containsAny(resultVo.getExtra(), extraOptimizationItems)) {
-                needPrint = true;
-                break;
-            }
-        }
-        // 打印所有结果
-        if (!needPrint) {
-            if (Arrays.asList(typeOptimizationItems).contains("*") || Arrays.asList(extraOptimizationItems).contains("*")) {
-                needPrint = true;
+        // * 打印所有结果
+        if (Arrays.asList(typeOptimizationItems).contains("*") || Arrays.asList(extraOptimizationItems).contains("*")) {
+            needPrint = true;
+        } else {
+            for (ExplainResultVo resultVo : explainResultList) {
+                if (StringUtils.containsAny(resultVo.getType(), typeOptimizationItems)) {
+                    needPrint = true;
+                    break;
+                }
+                if (StringUtils.containsAny(resultVo.getExtra(), extraOptimizationItems)) {
+                    needPrint = true;
+                    break;
+                }
             }
         }
 
         if (needPrint) {
-            ExplainHelper.printExplainResult(sql, explainResultList, showSQL);
+            ExplainHelper.printExplainResult(sql, explainResultList, printSQL);
         }
-    }
-
-    private static boolean isDebug() {
-        return System.getProperty("debug") != null;
     }
 }

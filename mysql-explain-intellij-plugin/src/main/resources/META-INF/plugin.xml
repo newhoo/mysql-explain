@@ -4,51 +4,31 @@
     <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/mysql-explain">huzunrong</vendor>
 
     <description><![CDATA[
+    <p>MySQL toolkit. <a href="https://github.com/newhoo/mysql-explain">Github</a></p>
     <ul>
-        <li>auto execute mysql explain when execute sql</li>
-        <br/>
+        <li>Auto print original mysql sql log.</li>
+        <li>Auto execute mysql explain when execute sql.</li>
+        <li>Support jdk8+, mysql-connector 5,6,8.</li>
+        <li>User-friendly, no intrusion into business services.</li>
+    </ul>
+    <ul>
+        <li>自动打印mysql语句日志</li>
         <li>自动查看mysql执行计划</li>
+        <li>支持jdk8+，支持mysql-connector 5、6、8</li>
+        <li>使用友好，对业务服务无侵入</li>
     </ul>
     ]]></description>
 
     <change-notes><![CDATA[
-        1.0.6
+        1.1.0
         <ul>
-            <li>fix bugs</li>
-        </ul>
-
-        1.0.5
-        <ul>
-            <li>support i18n</li>
-        </ul>
-
-        1.0.4
-        <ul>
-            <li>fix bugs with 2021.2</li>
-        </ul>
-
-        1.0.3
-        <ul>
-            <li>Fix mysql 5.6.40 compatibility issue</li>
-        </ul>
-
-        1.0.2
-        <ul>
-            <li>support mysql 8</li>
-        </ul>
-
-        1.0.1
-        <ul>
-            <li>remove javassist, use ASM from jdk internal</li>
-            <li>supported tomcat app</li>
+            <li>Enhance compatibility(support jdk8+, mysql-connector 5,6,8)</li>
+            <li>Separate log printing and explain execution</li>
+            <li>Optimize user-friendly configuration</li>
             <br/>
-            <li>去除javassist，改用jdk内置的ASM</li>
-            <li>支持tomcat应用</li>
-        </ul>
-
-        1.0.0
-        <ul>
-            <li>new plugin, just use it.</li>
+            <li>增强兼容性，支持jdk8+，支持mysql-connector 5、6、8</li>
+            <li>分离日志打印和Explain执行</li>
+            <li>优化配置，提示更友好</li>
         </ul>
       ]]>
     </change-notes>
@@ -64,7 +44,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <postStartupActivity implementation="io.github.newhoo.mysql.MyStartupActivity"/>
-        <projectConfigurable instance="io.github.newhoo.mysql.setting.SettingConfigurable"/>
+        <projectConfigurable instance="io.github.newhoo.mysql.setting.SettingConfigurable" displayName="MySQL Explain"/>
 
         <java.programPatcher implementation="io.github.newhoo.mysql.MysqlPreRunCheck"/>
     </extensions>

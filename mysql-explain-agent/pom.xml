@@ -6,23 +6,25 @@
 
     <groupId>io.github.newhoo.mysql</groupId>
     <artifactId>mysql-explain-agent</artifactId>
-    <version>1.0</version>
+    <version>1.1.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>org.javassist</groupId>-->
-<!--            <artifactId>javassist</artifactId>-->
-<!--            <version>3.27.0-GA</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.27.0-GA</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>mysql</groupId>-->
 <!--            <artifactId>mysql-connector-java</artifactId>-->
-<!--&lt;!&ndash;            <version>5.1.47</version>&ndash;&gt;-->
+<!--            <version>6.0.6</version>-->
+<!--            <version>5.1.49</version>-->
 <!--            <version>8.0.20</version>-->
+<!--            <version>8.0.33</version>-->
 <!--            <scope>provided</scope>-->
 <!--        </dependency>-->
 <!--        <dependency>-->
@@ -47,11 +49,11 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>utf-8</encoding>
-                    <compilerArguments>
+                    <!--<compilerArguments>
                         <verbose />
-                        <!-- 将jdk的依赖jar打入项目中，这样项目中使用的jdk的依赖就尅正常使用 -->
+                        &lt;!&ndash; 将jdk的依赖jar打入项目中，这样项目中使用的jdk的依赖就尅正常使用 &ndash;&gt;
                         <bootclasspath>${java.home}/lib/rt.jar</bootclasspath>
-                    </compilerArguments>
+                    </compilerArguments>-->
                 </configuration>
             </plugin>
             <plugin>

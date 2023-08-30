@@ -1,23 +1,36 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
 plugins {
-    id 'java'
-    id 'org.jetbrains.intellij' version '0.4.10'
+    id("java")
+    id('org.jetbrains.intellij') version '1.10.1'
 }
 
 group 'io.github.newhoo.mysql'
-version '1.0.6'
+version '1.1.0'
 
-sourceCompatibility = 1.8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    compile fileTree(dir: 'lib', includes: ['*jar'])
+    implementation fileTree(dir: 'lib', include: '*.jar')
 }
 
 intellij {
-    version '2018.1.7'
-    updateSinceUntilBuild false
-    sandboxDirectory = "${rootProject.rootDir}/idea-sandbox"
+    version.set('2018.1.7')
+    updateSinceUntilBuild.set(false)
+    downloadSources.set(true)
+    sandboxDir.set("${rootProject.rootDir}/idea-sandbox")
 }

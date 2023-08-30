@@ -2,6 +2,7 @@ package io.github.newhoo.mysql.explain;
 
 import github.clyoudu.consoletable.ConsoleTable;
 import github.clyoudu.consoletable.table.Cell;
+import io.github.newhoo.mysql.common.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,7 @@ class ExplainHelper {
                     .build()
                     .print();
         } catch (Exception e) {
-            System.out.println("[EXPLAIN SQL]结果打印异常: " + e.toString());
+            Log.error(e, "print explain result exception: %s", e.toString());
         }
     }
 }

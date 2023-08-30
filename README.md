@@ -1,31 +1,114 @@
 # MYSQL EXPLAIN
-auto execute mysql explain when execute sql. support `com.mysql.jdbc.PreparedStatement` statements.
+Auto execute mysql explain when execute sql in java project.
 
 ## Main functions
-- auto print mysql explain result
-- can print original sql
-- more simple filters
+- Auto print original mysql sql log.
+- Auto execute mysql explain when execute sql.
+- Support jdk8+, mysql-connector 5,6,8.
+- User-friendly, no intrusion into business services.
 
-## 功能描述
-- 自动输出SQL语句的执行计划
-- 自动输出执行的SQL语句
-- 以上两者不重复，可设置过滤条件
+## 功能
+- 自动打印mysql语句日志
+- 自动查看mysql执行计划
+- 支持jdk8+，支持mysql-connector 5、6、8
+- 使用友好，对业务服务无侵入
 
-## 相关配置描述如下：
+## Agent配置
+
+1. 从文件读取：默认读取classpath下的 `mysql-explain.properties`。可通过`-Dmysql-explain-properties-file=xx.properties`指定配置文件。
+
+2. 从jvm启动参数设置：格式 `-Dkey=value`，如果value包含空格，需用双引号包裹。
+
+3. 支持的配置项如下：
 
 ```properties
-# 非必填项：是否打印所有执行的MySQL语句，默认false。设置true时，会根据[mysql.filter]过滤滤
+# 是否打印所有执行的MySQL语句，默认false
 mysql.showSQL=false
 
-# 非必填项：MySQL explain执行过滤，按关键词匹配，英文逗号分割，比如：QRTZ_,COUNT(0)
-mysql.filter=QRTZ_,COUNT(0)
+# 打印MySQL语句过滤条件：包含关键词的不打印。英文逗号分割，比如：QRTZ_,COUNT(0)
+mysql.showSQL.filter=QRTZ_,COUNT(0)
 
-# 非必填项：MySQL explain结果按[type]过滤，默认ALL，英文逗号分割，*打印所有
-mysql.types=ALL
+# MySQL Explain执行前过滤条件，包含关键词的不执行。英文逗号分割，比如：INSERT,UPDATE,DELETE
+mysql.explain.filter=INSERT,UPDATE,DELETE
 
-# 非必填项：MySQL explain结果按[Extra]过滤，默认Using filesort,Using temporary，英文逗号分割，*打印所有
-mysql.extras=Using filesort,Using temporary
+# MySQL Explain结果按[type]过滤，包含关键词的才打印，默认ALL，英文逗号分割，*打印所有。范围：system,const,eq_ref,ref,range,index,ALL
+mysql.explain.types=ALL
+
+# MySQL Explain结果按[Extra]过滤，包含关键词的才打印，默认Using filesort,Using temporary，英文逗号分割，*打印所有。范围：Using filesort,Using temporary,Using where,Using index condition
+mysql.explain.extras=Using filesort,Using temporary
 ```
 
-## 示例
-![](./image/setting.png)
+## 使用
+
+### 前提
+项目为Java项目，且包含mysql连接驱动，支持 5、6、8
+
+### Idea中使用
+从Idea仓库中安装 MySQL Explain插件，在打开的项目中找到设置，勾选启用，设置条件，然后启动项目。
+
+![](.image/idea_setting_zh.png)
+
+### VS Code中使用
+1. 从git仓库中下载agent `distributions/mysql-explain-agent-x.x.x-jar-with-dependencies.jar`，放到指定目录
+2. 在 `launch.json` 中添加 `vmArgs`，如下
+```json lines
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Application",
+            "request": "launch",
+            // "console": "externalTerminal",
+            "mainClass": "com.example.Application",
+            "vmArgs": [
+                // "-Ddebug",
+                "-Xms1g",
+                "-Xmx1g",
+                "-javaagent:C:\\Users\\ella\\.vscode\\extensions\\mysql-explain-vscode-plugin\\lib\\mysql-explain-agent-1.1.0-jar-with-dependencies.jar",
+                "-Dmysql.showSQL=true",
+                "-Dmysql.showSQL.filter=QRTZ_,COUNT(0)",
+                "-Dmysql.explain.filter=",
+                "-Dmysql.explain.types=ALL",
+                "-Dmysql.explain.extras=Using filesort,Using temporary"
+            ]
+        }
+    ]
+}
+```
+3. 启动项目
+
+### 其他使用方式
+
+1. 从git仓库中下载agent `distributions/mysql-explain-agent-x.x.x-jar-with-dependencies.jar`，放到指定目录
+2. 启动参数添加
+```bash
+"-javaagent:C:\\Users\\ella\\AppData\\Roaming\\JetBrains\\IntelliJIdea2023.1\\plugins\\mysql-explain-intellij-plugin\\lib\\mysql-explain-agent-1.1.0-jar-with-dependencies.jar" "-Dmysql.showSQL=false" "-Dmysql.showSQL.filter=" "-Dmysql.explain.filter=INSERT,UPDATE,DELETE" "-Dmysql.explain.types=ALL" "-Dmysql.explain.extras=Using filesort,Using temporary"
+```
+
+## 其他
+
+1. 启动后输出，`-Ddebug`开启debug模式
+```text
+[mysql-explain] load parameter [mysql.showSQL] from jvm parameter: true
+[mysql-explain] load parameter [mysql.explain.filter] from jvm parameter: INSERT,UPDATE,DELETE
+[mysql-explain] load parameter [mysql.explain.types] from jvm parameter: ALL
+[mysql-explain] load parameter [mysql.explain.extras] from jvm parameter: Using filesort,Using temporary
+[mysql-explain] configurations: 
++---+---------------------------+----------------------+--------------------------------+--------------------------------+------------------------------------------------------------------+
+| # | config item               | config key           | current value                  | default value                  | remark                                                           |
++---+---------------------------+----------------------+--------------------------------+--------------------------------+------------------------------------------------------------------+
+| 1 | Print SQL                 | mysql.showSQL        | true                           | false                          | true/false                                                       |
+| 2 | Filter out before print   | mysql.showSQL.filter |                                |                                | Example: QRTZ_,COUNT(0)                                          |
+| 3 | Filter out before explain | mysql.explain.filter | INSERT,UPDATE,DELETE           |                                | Example: INSERT,UPDATE,DELETE                                    |
+| 4 | Filter by explain [type]  | mysql.explain.types  | ALL                            | ALL                            | system,const,eq_ref,ref,range,index,ALL                          |
+| 5 | Filter by explain [Extra] | mysql.explain.extras | Using filesort,Using temporary | Using filesort,Using temporary | Using filesort,Using temporary,Using where,Using index condition |
++---+---------------------------+----------------------+--------------------------------+--------------------------------+------------------------------------------------------------------+
+```
+
+2. 如果同时有使用idea，可在idea配置中生成启动参数
+
+![](.image/idea_setting_preview.png)

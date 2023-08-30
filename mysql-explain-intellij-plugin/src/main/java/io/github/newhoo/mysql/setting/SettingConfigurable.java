@@ -19,10 +19,12 @@ public class SettingConfigurable implements Configurable {
 
     private final PluginProjectSetting projectSetting;
     private final SettingForm settingForm;
+    private final Project project;
 
     public SettingConfigurable(Project project) {
+        this.project = project;
         this.projectSetting = new PluginProjectSetting(project);
-        this.settingForm = new SettingForm();
+        this.settingForm = new SettingForm(project, projectSetting);
     }
 
     @Nls(capitalization = Capitalization.Title)
@@ -34,8 +36,6 @@ public class SettingConfigurable implements Configurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        reset();
-
         return settingForm.mainPanel;
     }
 
@@ -43,6 +43,7 @@ public class SettingConfigurable implements Configurable {
     public boolean isModified() {
         return projectSetting.getEnableMySQLExplain() != settingForm.mysqlExplainEnableCheckbox.isSelected()
                 || projectSetting.getMysqlShowSql() != settingForm.mysqlShowSqlCheckBox.isSelected()
+                || !StringUtils.equals(projectSetting.getPrintSqlFilter(), settingForm.printSqlFilterTextField.getText())
                 || !StringUtils.equals(projectSetting.getMysqlFilter(), settingForm.mysqlFilterText.getText())
                 || !StringUtils.equals(projectSetting.getMysqlTypes(), settingForm.mysqlTypesText.getText())
                 || !StringUtils.equals(projectSetting.getMysqlExtras(), settingForm.mysqlExtrasText.getText());
@@ -52,6 +53,7 @@ public class SettingConfigurable implements Configurable {
     public void apply() {
         projectSetting.setEnableMySQLExplain(settingForm.mysqlExplainEnableCheckbox.isSelected());
         projectSetting.setMysqlShowSql(settingForm.mysqlShowSqlCheckBox.isSelected());
+        projectSetting.setPrintSqlFilter(settingForm.printSqlFilterTextField.getText());
         projectSetting.setMysqlFilter(settingForm.mysqlFilterText.getText());
         projectSetting.setMysqlTypes(settingForm.mysqlTypesText.getText());
         projectSetting.setMysqlExtras(settingForm.mysqlExtrasText.getText());
@@ -59,10 +61,6 @@ public class SettingConfigurable implements Configurable {
 
     @Override
     public void reset() {
-        settingForm.mysqlExplainEnableCheckbox.setSelected(projectSetting.getEnableMySQLExplain());
-        settingForm.mysqlShowSqlCheckBox.setSelected(projectSetting.getMysqlShowSql());
-        settingForm.mysqlFilterText.setText(projectSetting.getMysqlFilter());
-        settingForm.mysqlTypesText.setText(projectSetting.getMysqlTypes());
-        settingForm.mysqlExtrasText.setText(projectSetting.getMysqlExtras());
+        settingForm.reset(project);
     }
 }
