@@ -1,7 +1,7 @@
 package io.github.newhoo.mysql;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class MyStartupActivity implements StartupActivity {
 
                 ApplicationManager.getApplication().runReadAction(() -> {
                     if (StringUtils.isNotEmpty(setting.getAgentPath())) {
-                        if (!StringUtils.contains(setting.getAgentPath(), "mysql-explain-agent-1.1.0-jar-with-dependencies.jar")) {
+                        if (!StringUtils.contains(setting.getAgentPath(), "mysql-explain-agent-1.1.1-with-dependencies.jar")) {
                             setting.setAgentPath(null);
                         } else if (!new File(setting.getAgentPath()).exists()) {
                             setting.setAgentPath(null);
@@ -62,15 +63,17 @@ public class MyStartupActivity implements StartupActivity {
     }
 
     /**
-     * -javaagent:/path/your/bean-invoker-agent.jar
+     * -javaagent:/path/your/mysql-explain-agent.jar
      */
-    private static Optional<String> getAgentPath(String pluginId, String agentName) {
+    public static Optional<String> getAgentPath(String pluginId, String agentName) {
         PluginId pluginId0 = PluginId.getId(pluginId);
-        IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId0);
+        IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginId0);
         if (plugin != null) {
-//            Path pluginPath = plugin.getPluginPath();
-            File path = plugin.getPath();
-            return Arrays.stream(Objects.requireNonNull(path.listFiles()))
+            Path pluginPath = plugin.getPluginPath();
+            if (pluginPath == null) {
+                return Optional.empty();
+            }
+            return Arrays.stream(Objects.requireNonNull(pluginPath.toFile().listFiles()))
                          .filter(File::isDirectory)
                          .flatMap(file -> Arrays.stream(Objects.requireNonNull(file.listFiles(f -> f.getName().endsWith(".jar")))))
                          .filter(file -> file.getName().contains(agentName))

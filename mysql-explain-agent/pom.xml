@@ -6,7 +6,7 @@
 
     <groupId>io.github.newhoo.mysql</groupId>
     <artifactId>mysql-explain-agent</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.27.0-GA</version>
+            <version>3.30.2-GA</version>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>mysql</groupId>-->
@@ -56,7 +56,7 @@
                     </compilerArguments>-->
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.0.0</version>
@@ -70,7 +70,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <!-- <Agent-Class>com.ex.javassist.agent1.TestAgent</Agent-Class> -->
+                            &lt;!&ndash; <Agent-Class>com.ex.javassist.agent1.TestAgent</Agent-Class> &ndash;&gt;
                             <Premain-Class>io.github.newhoo.mysql.MySQLExplainInstrumentation</Premain-Class>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
@@ -86,8 +86,8 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <!--<plugin>
+            </plugin>-->
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.3</version>
@@ -98,7 +98,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            &lt;!&ndash; <minimizeJar>true</minimizeJar> &ndash;&gt;
+                            <!-- <minimizeJar>true</minimizeJar> -->
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>with-dependencies</shadedClassifierName>
                             <relocations>
@@ -111,7 +111,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        &lt;!&ndash; <Agent-Class>com.ex.javassist.agent1.TestAgent</Agent-Class> &ndash;&gt;
+                                        <!-- <Agent-Class>com.ex.javassist.agent1.TestAgent</Agent-Class> -->
                                         <Premain-Class>io.github.newhoo.mysql.MySQLExplainInstrumentation</Premain-Class>
                                         <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                         <Can-Retransform-Classes>true</Can-Retransform-Classes>
@@ -121,7 +121,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 </project>

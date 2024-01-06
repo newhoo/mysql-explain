@@ -10,11 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.newhoo.mysql.common.Config.extraOptimizationItems;
-import static io.github.newhoo.mysql.common.Config.filterSqlKeywords;
-import static io.github.newhoo.mysql.common.Config.showSQL;
-import static io.github.newhoo.mysql.common.Config.typeOptimizationItems;
-
 /**
  * MySQL执行计划
  *
@@ -101,8 +96,8 @@ public final class MySQLExplain {
             Log.debug("unsupported explain: sql.split(\" \", 2) return empty");
             return false;
         }
-        if (StringUtils.containsAny(sql, filterSqlKeywords)) {
-            Log.debug("unsupported explain - filter out by [type] keywords: %s", Arrays.asList(filterSqlKeywords));
+        if (StringUtils.containsAny(sql, Config.filterSqlKeywords)) {
+            Log.debug("unsupported explain - filter out by [type] keywords: %s", Arrays.asList(Config.filterSqlKeywords));
             return false;
         }
         if (!Constant.SUPPORTED_EXPLAIN_SQL.contains(s[0])) {
@@ -122,15 +117,15 @@ public final class MySQLExplain {
         boolean needPrint = false;
 
         // * 打印所有结果
-        if (Arrays.asList(typeOptimizationItems).contains("*") || Arrays.asList(extraOptimizationItems).contains("*")) {
+        if (Arrays.asList(Config.typeOptimizationItems).contains("*") || Arrays.asList(Config.extraOptimizationItems).contains("*")) {
             needPrint = true;
         } else {
             for (ExplainResultVo resultVo : explainResultList) {
-                if (StringUtils.containsAny(resultVo.getType(), typeOptimizationItems)) {
+                if (StringUtils.containsAny(resultVo.getType(), Config.typeOptimizationItems)) {
                     needPrint = true;
                     break;
                 }
-                if (StringUtils.containsAny(resultVo.getExtra(), extraOptimizationItems)) {
+                if (StringUtils.containsAny(resultVo.getExtra(), Config.extraOptimizationItems)) {
                     needPrint = true;
                     break;
                 }

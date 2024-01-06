@@ -1,11 +1,10 @@
 package io.github.newhoo.mysql.transformer;
 
 import io.github.newhoo.mysql.common.Log;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
+import javassist.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -38,28 +37,43 @@ public class MySQLExplainTransformer implements ClassFileTransformer {
     }
 
     private byte[] assistVisit(byte[] classfileBuffer, boolean isMysql8) {
+        try {
+            ClassPool pool = ClassPool.getDefault(); // javassist.ClassPoolTail.appendSystemPath
+            Log.info("classPool: %s, %s, %s", javassist.bytecode.ClassFile.MAJOR_VERSION, Thread.currentThread().getContextClassLoader(), pool.toString());
+            try {
+                return assistVisit(pool, classfileBuffer, isMysql8, false);
+            } catch (CannotCompileException e) {
+                Log.info("visit method compile error: %s", e.toString());
+                ClassPath classPath = pool.appendClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
+                Log.info("try appendClassPath: %s", classPath);
+            }
+            return assistVisit(pool, classfileBuffer, isMysql8, true);
+        } catch (Exception e) {
+            Log.error(e, "visit method error: %s", e.toString());
+        }
+        return classfileBuffer;
+    }
+
+    private byte[] assistVisit(ClassPool pool, byte[] classfileBuffer, boolean isMysql8, boolean appendClassPath) throws IOException, CannotCompileException, NotFoundException {
         CtClass cl = null;
         try {
-            ClassPool pool = ClassPool.getDefault();
             cl = pool.makeClass(new ByteArrayInputStream(classfileBuffer));
-
-            pool.importPackage("io.github.newhoo.mysql.explain.MySQLExplain");
+            if (!appendClassPath) {
+                pool.importPackage("io.github.newhoo.mysql.explain.MySQLExplain");
+            }
 
             CtMethod m = cl.getDeclaredMethod("executeInternal");
+            Log.info("visit method: %s", m.getLongName());
             if (isMysql8) {
                 m.insertBefore("{ MySQLExplain.explainSql(getConnection(), toString()); }");
             } else {
                 m.insertBefore("{ MySQLExplain.explainSql(getConnection(), asSql()); }");
             }
-            Log.info("visit method: %s", m.getLongName());
             return cl.toBytecode();
-        } catch (Exception e) {
-            Log.error(e, "visit method error: %s", e.toString());
         } finally {
             if (cl != null) {
                 cl.detach();// ClassPool默认不会回收，需要手动清理
             }
         }
-        return classfileBuffer;
     }
 }

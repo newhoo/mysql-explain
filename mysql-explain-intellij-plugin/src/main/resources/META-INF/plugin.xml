@@ -20,6 +20,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        1.1.1
+        <ul>
+            <li>fix agent injection bug;</li>
+            <li>fix compatibility problems</li>
+        </ul>
+
         1.1.0
         <ul>
             <li>Enhance compatibility(support jdk8+, mysql-connector 5,6,8)</li>
@@ -39,7 +45,7 @@
     -->
     <depends>com.intellij.modules.java</depends>
 
-    <idea-version since-build="181.0"/>
+    <idea-version since-build="201.6668.113"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
