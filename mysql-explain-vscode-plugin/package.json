@@ -8,7 +8,7 @@
   "publisher": "newhoo",
   "repository": {
     "type": "git",
-    "url": "https://github.com/newhoo/mysql-explain/mysql-explain-vscode-plugin"
+    "url": "https://github.com/newhoo/mysql-explain"
   },
   "author": {
     "name": "newhoo",
