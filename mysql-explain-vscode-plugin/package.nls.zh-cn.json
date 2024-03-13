@@ -1,0 +1,8 @@
+{
+    "java-mysql-explain.configuration.enablePrintSQL.description":"启用SQL语句输出",
+    "java-mysql-explain.configuration.filterPrintSQL.description":"SQL语句输出过虑条件，包含关键词的不输出。英文逗号分割，比如：`QRTZ_,COUNT(0)`",
+    "java-mysql-explain.configuration.filterBeforeExplain.description":"Explain执行前过滤条件,包含关键词的不执行。英文逗号分割，比如：`INSERT,UPDATE,DELETE`",
+    "java-mysql-explain.configuration.filterByTypeAfterExplain.description":"Explain结果按 **[type]** 过滤，包含关键词的才打印，英文逗号分割，`*` 打印所有。范围：`system,const,eq_ref,ref,range,index,ALL`",
+    "java-mysql-explain.configuration.filterByExtraAfterExplain.description":"Explain结果按 **[Extra]** 过滤，包含关键词的才打印，英文逗号分割，`*` 打印所有。范围：`Using filesort,Using temporary,Using where,Using index condition`",
+    "java-mysql-explain.commands.GenarateMysqlExplainVmargs.title":"生成 Mysql Explain 启动参数"
+}

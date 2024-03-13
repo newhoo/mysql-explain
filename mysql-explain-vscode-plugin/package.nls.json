@@ -1,0 +1,8 @@
+{
+    "java-mysql-explain.configuration.enablePrintSQL.description":"Enable print SQL",
+    "java-mysql-explain.configuration.filterPrintSQL.description":"Only print when not match keywords. Split by comma, such as: `QRTZ_,COUNT(0)`",
+    "java-mysql-explain.configuration.filterBeforeExplain.description":"Filter out before explain. Only execute when not match keywords. Split by comma, such as: `INSERT,UPDATE,DELETE`",
+    "java-mysql-explain.configuration.filterByTypeAfterExplain.description":"Filter by explain **[type]**. Split by comma. Print all when using `*`. Level: `system,const,eq_ref,ref,range,index,ALL`",
+    "java-mysql-explain.configuration.filterByExtraAfterExplain.description":"Filter by explain **[Extra]**. Split by comma. Print all when using `*`. Scope: `Using filesort,Using temporary,Using where,Using index condition`",
+    "java-mysql-explain.commands.GenarateMysqlExplainVmargs.title":"Generate Mysql Explain vmArgs"
+}

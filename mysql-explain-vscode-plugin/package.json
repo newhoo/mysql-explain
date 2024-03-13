@@ -1,0 +1,112 @@
+{
+  "name": "java-mysql-explain",
+  "displayName": "Mysql Explain for Java",
+  "description": "Auto execute mysql explain when execute sql in java project.",
+  "version": "1.0.0",
+  "icon": "icon.png",
+  "license": "MIT",
+  "publisher": "newhoo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newhoo/mysql-explain/mysql-explain-vscode-plugin"
+  },
+  "author": {
+    "name": "newhoo",
+    "url": "https://github.com/newhoo"
+  },
+  "keywords": [
+    "java",
+    "mysql",
+    "explain",
+    "sql"
+  ],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": [
+      {
+        "type": "object",
+        "title": "Mysql Explain for Java",
+        "order": 1,
+        "properties": {
+          "java-mysql-explain.enablePrintSQL": {
+            "type": "boolean",
+            "order": 1,
+            "default": true,
+            "markdownDescription": "%java-mysql-explain.configuration.enablePrintSQL.description%"
+          },
+          "java-mysql-explain.filterPrintSQL": {
+            "type": "string",
+            "order": 2,
+            "default": "",
+            "markdownDescription": "%java-mysql-explain.configuration.filterPrintSQL.description%"
+          },
+          "java-mysql-explain.filterBeforeExplain": {
+            "type": "string",
+            "order": 3,
+            "default": "",
+            "markdownDescription": "%java-mysql-explain.configuration.filterBeforeExplain.description%"
+          },
+          "java-mysql-explain.filterByTypeAfterExplain": {
+            "type": "string",
+            "order": 4,
+            "default": "ALL",
+            "markdownDescription": "%java-mysql-explain.configuration.filterByTypeAfterExplain.description%"
+          },
+          "java-mysql-explain.filterByExtraAfterExplain": {
+            "type": "string",
+            "order": 5,
+            "default": "Using filesort,Using temporary",
+            "markdownDescription": "%java-mysql-explain.configuration.filterByExtraAfterExplain.description%"
+          }
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "java-mysql-explain.GenarateMysqlExplainVmargs",
+        "title": "%java-mysql-explain.commands.GenarateMysqlExplainVmargs.title%"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceFilename == launch.json",
+          "command": "java-mysql-explain.GenarateMysqlExplainVmargs",
+          "group": "y_z_group"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./",
+    "lint": "eslint \"src/**/*.ts\"",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.34",
+    "@types/vscode": "^1.73.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "eslint": "^8.26.0",
+    "ts-loader": "^7.0.5",
+    "typescript": "^5.3.2",
+    "vscode-nls-dev": "^4.0.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "comment-json": "^4.2.3"
+  }
+}
