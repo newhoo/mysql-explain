@@ -1,34 +1,26 @@
 import * as vscode from 'vscode';
-import { existsSync } from 'fs';
 import * as path from 'path';
 import { parse, stringify, CommentArray, CommentObject, CommentJSONValue } from 'comment-json';
 
 export function activate(context: vscode.ExtensionContext) {
 	const openGitInBrowserCommand = vscode.commands.registerCommand("java-mysql-explain.GenarateMysqlExplainVmargs", (arg: any) => {
-		const workspaceFolders = vscode.workspace.workspaceFolders;
-		if (workspaceFolders == undefined || workspaceFolders.length < 1) {
-			return
-		}
-		const extensionPath = vscode.extensions.getExtension("newhoo.java-mysql-explain")?.extensionPath
-		const agentPath = extensionPath + path.sep + "jars" + path.sep + "mysql-explain-agent.jar"
-		if (!existsSync(agentPath)) {
-			return
-		}
 		const activeTextEditor = vscode.window.activeTextEditor
 		if (!activeTextEditor || activeTextEditor.document.fileName.indexOf('launch.json') < 0) {
 			vscode.window.showInformationMessage("You can do this only in current editor whith `launch.json` file.");
 			return
 		}
-
-		const mysqlExplainConfig = vscode.workspace.getConfiguration("java-mysql-explain")
-
 		const launchObj = <CommentObject>parse(activeTextEditor.document.getText())
 		if (!launchObj) {
 			vscode.window.showErrorMessage("Can't parse this `launch.json` file.");
 			return
 		}
-		const configurations = <CommentArray<CommentObject>>launchObj['configurations']
+		
+		const extensionPath = vscode.extensions.getExtension("newhoo.java-mysql-explain")?.extensionPath
+		const agentPath = extensionPath + path.sep + "jars" + path.sep + "mysql-explain-agent.jar"
+		const mysqlExplainConfig = vscode.workspace.getConfiguration("java-mysql-explain")
+		
 		let upsertVmArgs = false
+		const configurations = <CommentArray<CommentObject>>launchObj['configurations']
 		configurations.forEach(configuration => {
 			if (configuration['type'] === 'java' && configuration['request'] === 'launch') {
 				let vmArgsArr: string[] | CommentArray<string> = []

@@ -24,7 +24,7 @@
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -77,10 +77,16 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "java-mysql-explain.GenarateMysqlExplainVmargs",
+          "when": "false"
+        }
+      ],
       "editor/context": [
         {
-          "when": "resourceFilename == launch.json",
           "command": "java-mysql-explain.GenarateMysqlExplainVmargs",
+          "when": "resourceFilename == launch.json",
           "group": "y_z_group"
         }
       ]

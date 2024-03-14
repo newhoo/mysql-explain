@@ -39,6 +39,14 @@ const config = {
                 //     }
                 // }
             }]
+        },
+        {
+            // vscode-nls-dev loader:
+            // * rewrite nls-calls
+            loader: 'vscode-nls-dev/lib/webpack-loader',
+            options: {
+              base: path.join(__dirname, 'src')
+          }
         }]
     },
 }
