@@ -9,10 +9,12 @@ Auto execute mysql explain when execute sql in java project. Install via the [VS
 - Support jdk8+, mysql-connector 5,6,8.
 - User-friendly, no intrusion into business services.
 
-_- 自动打印 mysql 语句日志_
-_- 自动查看 mysql 执行计划_
-_- 支持 jdk8+，支持 mysql-connector 5、6、8_
-_- 使用友好，对业务服务无侵入_
+<br>
+
+- 自动打印 mysql 语句日志
+- 自动查看 mysql 执行计划
+- 支持 jdk8+，支持 mysql-connector 5、6、8
+- 使用友好，对业务服务无侵入
 
 ## Usage
 

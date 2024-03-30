@@ -51,7 +51,7 @@ mysql.explain.extras=Using filesort,Using temporary
 
 从 Idea 仓库中安装 MySQL Explain 插件，在打开的项目中找到设置，勾选启用，设置条件，然后启动项目。
 
-![](.image/idea_setting_zh.png)
+![](docs/idea_setting_zh.png)
 
 ### VS Code 中使用
 
@@ -92,7 +92,7 @@ mysql.explain.extras=Using filesort,Using temporary
 2. 启动参数添加
 
 ```bash
-"-javaagent:C:\\Users\\ella\\AppData\\Roaming\\JetBrains\\IntelliJIdea2023.1\\plugins\\mysql-explain-intellij-plugin\\lib\\mysql-explain-agent-1.1.0-jar-with-dependencies.jar" 
+"-javaagent:C:\\Users\\ella\\AppData\\Roaming\\JetBrains\\IntelliJIdea2023.1\\plugins\\mysql-explain-intellij-plugin\\lib\\mysql-explain-agent-1.1.0-jar-with-dependencies.jar"
 "-Dmysql.showSQL=false"
 "-Dmysql.showSQL.filter="
 "-Dmysql.explain.filter=INSERT,UPDATE,DELETE"
@@ -123,4 +123,4 @@ mysql.explain.extras=Using filesort,Using temporary
 
 2. 如果同时有使用 idea，可在 idea 配置中生成启动参数
 
-![](.image/idea_setting_preview.png)
+![](docs/idea_setting_preview.png)
