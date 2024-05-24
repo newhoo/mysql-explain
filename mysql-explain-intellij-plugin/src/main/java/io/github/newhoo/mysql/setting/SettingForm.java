@@ -1,6 +1,7 @@
 package io.github.newhoo.mysql.setting;
 
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -78,52 +79,59 @@ public class SettingForm {
         filterByExtraTipLabel.setText(ExplainBundle.getMessage("plugin.setting.filterByExtraTipLabel"));
 
         previewLabel.setText(ExplainBundle.getMessage("plugin.setting.previewLabel"));
-        if (project.isDefault()) {
-            previewPanel.setVisible(false);
-        } else {
-            addFocusListener(printSqlFilterTextField);
-            addFocusListener(mysqlFilterText);
-            addFocusListener(mysqlTypesText);
-            addFocusListener(mysqlExtrasText);
 
-            mysqlExplainEnableCheckbox.addItemListener(e -> setPreview());
-            mysqlShowSqlCheckBox.addItemListener(e -> setPreview());
-            if (StringUtils.isEmpty(projectSetting.getAgentPath())) {
-                return;
-            }
-            previewLabel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    // 生成快捷按钮
-                    DefaultActionGroup generateActionGroup = new DefaultActionGroup(
-                            new AnAction("Copy as line string") {
-                                @Override
-                                public void actionPerformed(@NotNull AnActionEvent e) {
-                                    String s = previewTextArea.getText().replace("\\", "\\\\").replace("\n", " ");
-                                    CopyPasteManager.getInstance().setContents(new StringSelection(s));
-                                }
-                            },
-                            new AnAction("Copy as string array") {
-                                @Override
-                                public void actionPerformed(@NotNull AnActionEvent e) {
-                                    String s = previewTextArea.getText().replace("\\", "\\\\").replace("\n", ",\n    ");
-                                    CopyPasteManager.getInstance().setContents(new StringSelection("[\n    " + s + "\n]"));
-                                }
-                            }
-                    );
+        addFocusListener(printSqlFilterTextField);
+        addFocusListener(mysqlFilterText);
+        addFocusListener(mysqlTypesText);
+        addFocusListener(mysqlExtrasText);
 
-                    DataContext dataContext = DataManager.getInstance().getDataContext(previewLabel);
-                    final ListPopup popup = JBPopupFactory.getInstance()
-                                                          .createActionGroupPopup(
-                                                                  null,
-                                                                  generateActionGroup,
-                                                                  dataContext,
-                                                                  JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                                                                  true);
-                    popup.showInBestPositionFor(dataContext);
-                }
-            });
+        mysqlExplainEnableCheckbox.addItemListener(e -> setPreview());
+        mysqlShowSqlCheckBox.addItemListener(e -> setPreview());
+        if (StringUtils.isEmpty(projectSetting.getAgentPath())) {
+            return;
         }
+        previewLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 生成快捷按钮
+                DefaultActionGroup generateActionGroup = new DefaultActionGroup(
+                        new AnAction("Copy as Line String") {
+                            @Override
+                            public @NotNull ActionUpdateThread getActionUpdateThread() {
+                                return ActionUpdateThread.BGT;
+                            }
+
+                            @Override
+                            public void actionPerformed(@NotNull AnActionEvent e) {
+                                String s = previewTextArea.getText().replace("\\", "\\\\").replace("\n", " ");
+                                CopyPasteManager.getInstance().setContents(new StringSelection(s));
+                            }
+                        },
+                        new AnAction("Copy as String Array") {
+                            @Override
+                            public @NotNull ActionUpdateThread getActionUpdateThread() {
+                                return ActionUpdateThread.BGT;
+                            }
+
+                            @Override
+                            public void actionPerformed(@NotNull AnActionEvent e) {
+                                String s = previewTextArea.getText().replace("\\", "\\\\").replace("\n", ",\n    ");
+                                CopyPasteManager.getInstance().setContents(new StringSelection("[\n    " + s + "\n]"));
+                            }
+                        }
+                );
+
+                DataContext dataContext = DataManager.getInstance().getDataContext(previewLabel);
+                final ListPopup popup = JBPopupFactory.getInstance()
+                                                      .createActionGroupPopup(
+                                                              null,
+                                                              generateActionGroup,
+                                                              dataContext,
+                                                              JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                                                              true);
+                popup.showInBestPositionFor(dataContext);
+            }
+        });
     }
 
     private void addFocusListener(JTextField jTextField) {
@@ -147,9 +155,6 @@ public class SettingForm {
         mysqlTypesText.setText(projectSetting.getMysqlTypes());
         mysqlExtrasText.setText(projectSetting.getMysqlExtras());
 
-        if (project.isDefault()) {
-            return;
-        }
         setPreview();
     }
 

@@ -20,6 +20,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        1.1.2
+        <ul>
+            <li>fix exception in 2024.1;</li>
+        </ul>
+
         1.1.1
         <ul>
             <li>fix agent injection bug;</li>
@@ -45,7 +50,8 @@
     -->
     <depends>com.intellij.modules.java</depends>
 
-    <idea-version since-build="201.6668.113"/>
+<!--    <idea-version since-build="201.6668.113"/>-->
+    <idea-version since-build="231.0"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->

@@ -2,20 +2,23 @@ package io.github.newhoo.mysql;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.startup.ProjectActivity;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import io.github.newhoo.mysql.setting.PluginProjectSetting;
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -27,39 +30,47 @@ import java.util.Optional;
 /**
  * 启动后判断
  */
-public class MyStartupActivity implements StartupActivity {
+public class MyStartupActivity implements ProjectActivity {
 
+    @Nullable
     @Override
-    public void runActivity(@NotNull Project project) {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "MySQL Explain Check", false) {
+    public Object execute(@NotNull Project project, @NotNull Continuation<? super Unit> continuation) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "MySQL explain check", false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 PluginProjectSetting setting = new PluginProjectSetting(project);
 
-                ApplicationManager.getApplication().runReadAction(() -> {
-                    if (StringUtils.isNotEmpty(setting.getAgentPath())) {
-                        if (!StringUtils.contains(setting.getAgentPath(), "mysql-explain-agent-1.1.1-with-dependencies.jar")) {
-                            setting.setAgentPath(null);
-                        } else if (!new File(setting.getAgentPath()).exists()) {
-                            setting.setAgentPath(null);
-                        }
-                    }
-                    if (StringUtils.isEmpty(setting.getAgentPath())) {
-                        AppExecutorUtil.getAppExecutorService().execute(() -> {
-                            getAgentPath("io.github.newhoo.mysql-explain", "mysql-explain-agent")
-                                    .ifPresent(s -> {
-                                        System.out.println("[mysql-explain] set agent path: " + s);
-                                        setting.setAgentPath(s);
-                                    });
-                        });
-                    }
+                DumbService.getInstance(project)
+                           .runReadActionInSmartMode(() -> {
+                               if (!setting.getExistMysqlJar()) {
+                                   boolean existMysqlJar = existMysqlJar(project);
+                                   System.out.println("[mysql-explain] check exists mysql connector driver: " + existMysqlJar);
+                                   setting.setExistMysqlJar(existMysqlJar);
+                                   if (existMysqlJar) {
+                                       setting.setEnableMySQLExplain(true);
+                                   }
+                               }
 
-                    boolean existMysqlJar = existMysqlJar(project);
-                    System.out.println("[mysql-explain] check exists mysql connector driver: " + existMysqlJar);
-                    setting.setExistMysqlJar(existMysqlJar);
-                });
+                               if (StringUtils.isNotEmpty(setting.getAgentPath())) {
+                                   if (!StringUtils.contains(setting.getAgentPath(), "mysql-explain-agent-1.1.1-with-dependencies.jar")) {
+                                       setting.setAgentPath(null);
+                                   } else if (!new File(setting.getAgentPath()).exists()) {
+                                       setting.setAgentPath(null);
+                                   }
+                               }
+                               if (StringUtils.isEmpty(setting.getAgentPath())) {
+                                   AppExecutorUtil.getAppExecutorService().execute(() -> {
+                                       getAgentPath("io.github.newhoo.mysql-explain", "mysql-explain-agent")
+                                               .ifPresent(s -> {
+                                                   System.out.println("[mysql-explain] set agent path: " + s);
+                                                   setting.setAgentPath(s);
+                                               });
+                                   });
+                               }
+                           });
             }
         });
+        return null;
     }
 
     /**
