@@ -7,17 +7,13 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.runners.JavaProgramPatcher;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import io.github.newhoo.mysql.setting.PluginProjectSetting;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_EXTRAS;
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_FILTER;
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL;
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER;
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_TYPES;
+import static io.github.newhoo.mysql.common.Constant.*;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -42,27 +38,36 @@ public class MysqlPreRunCheck extends JavaProgramPatcher {
             RunConfiguration runConfiguration = (RunConfiguration) configuration;
             PluginProjectSetting setting = new PluginProjectSetting(runConfiguration.getProject());
 
-            logger.info("Check mysql explain plugin status.");
-            if (setting.getEnableMySQLExplain()) {
-                if (!setting.getExistMysqlJar()) {
-                    logger.info("Can't found mysql driver in the classpath, please check your project.");
-                    return;
-                }
-                ParametersList vmParametersList = javaParameters.getVMParametersList();
+            if (!checkCondition(setting, runConfiguration.getProject())) {
+                return;
+            }
 
-                String agentPath = setting.getAgentPath();
-                if (StringUtils.isNotEmpty(agentPath)) {
-                    vmParametersList.addParametersString("\"-javaagent:" + agentPath + "\"");
+            ParametersList vmParametersList = javaParameters.getVMParametersList();
 
-                    vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL, String.valueOf(setting.getMysqlShowSql()));
-                    vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER, setting.getPrintSqlFilter());
-                    vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_FILTER, setting.getMysqlFilter());
-                    vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_TYPES, setting.getMysqlTypes());
-                    vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_EXTRAS, setting.getMysqlExtras());
+            String agentPath = JavaToolHelper.getMySQLExplainAgentPath();
+            if (!agentPath.isEmpty()) {
+                vmParametersList.addParametersString("\"-javaagent:" + agentPath + "\"");
 
-                    logger.info("run parameters: " + vmParametersList);
-                }
+                vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL, String.valueOf(setting.getMysqlShowSql()));
+                vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER, setting.getPrintSqlFilter());
+                vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_FILTER, setting.getMysqlFilter());
+                vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_TYPES, setting.getMysqlTypes());
+                vmParametersList.addNotEmptyProperty(PROPERTIES_KEY_MYSQL_EXTRAS, setting.getMysqlExtras());
+
+                logger.info("run parameters: " + vmParametersList);
             }
         }
+    }
+
+    private boolean checkCondition(PluginProjectSetting setting, Project project) {
+        logger.info("Check mysql explain plugin status.");
+        if (!setting.getEnableMySQLExplain()) {
+            return false;
+        }
+        // 存在mysql驱动
+        if (!JavaToolHelper.existMysqlJar(project)) {
+            return false;
+        }
+        return true;
     }
 }

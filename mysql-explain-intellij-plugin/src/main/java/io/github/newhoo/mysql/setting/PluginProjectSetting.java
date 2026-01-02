@@ -11,8 +11,6 @@ import com.intellij.openapi.project.Project;
  */
 public class PluginProjectSetting {
 
-    private static final String KEY_AGENT_PATH = "mysql-explain.agentPath";
-    private static final String KEY_EXIST_MYSQL_JAR = "mysql-explain.existMysqlJar";
     private static final String KEY_MYSQL_EXPLAIN_ENABLE = "mysql-explain.enableMySQLExplain";
     private static final String KEY_MYSQL_SHOW_SQL = "mysql-explain.mysql.showSQL";
     private static final String KEY_MYSQL_PRINT_SQL_FILTER = "mysql-explain.mysql.showSQL.filter";
@@ -21,44 +19,25 @@ public class PluginProjectSetting {
     private static final String KEY_MYSQL_EXTRAS = "mysql-explain.mysql.extras";
 
     private final PropertiesComponent projectSetting;
-    private final PropertiesComponent globalSetting;
 
     public PluginProjectSetting(Project project) {
         this.projectSetting = PropertiesComponent.getInstance(project);
-        this.globalSetting = PropertiesComponent.getInstance();
-    }
-
-
-    public boolean getExistMysqlJar() {
-        return projectSetting.getBoolean(KEY_EXIST_MYSQL_JAR, Boolean.FALSE);
-    }
-
-    public void setExistMysqlJar(boolean existMysqlJar) {
-        projectSetting.setValue(KEY_EXIST_MYSQL_JAR, existMysqlJar);
-    }
-
-    public String getAgentPath() {
-        return globalSetting.getValue(KEY_AGENT_PATH);
-    }
-
-    public void setAgentPath(String agentPath) {
-        globalSetting.setValue(KEY_AGENT_PATH, agentPath);
     }
 
     public boolean getEnableMySQLExplain() {
-        return projectSetting.getBoolean(KEY_MYSQL_EXPLAIN_ENABLE, Boolean.FALSE);
+        return projectSetting.getBoolean(KEY_MYSQL_EXPLAIN_ENABLE, Boolean.TRUE);
     }
 
     public void setEnableMySQLExplain(boolean enableMySQLExplain) {
-        projectSetting.setValue(KEY_MYSQL_EXPLAIN_ENABLE, enableMySQLExplain);
+        projectSetting.setValue(KEY_MYSQL_EXPLAIN_ENABLE, enableMySQLExplain, Boolean.TRUE);
     }
 
     public boolean getMysqlShowSql() {
-        return projectSetting.getBoolean(KEY_MYSQL_SHOW_SQL, Boolean.FALSE);
+        return projectSetting.getBoolean(KEY_MYSQL_SHOW_SQL, Boolean.TRUE);
     }
 
     public void setMysqlShowSql(boolean mysqlShowSql) {
-        projectSetting.setValue(KEY_MYSQL_SHOW_SQL, mysqlShowSql, Boolean.FALSE);
+        projectSetting.setValue(KEY_MYSQL_SHOW_SQL, mysqlShowSql, Boolean.TRUE);
     }
 
     public String getPrintSqlFilter() {

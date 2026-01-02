@@ -1,17 +1,13 @@
 package io.github.newhoo.mysql.setting;
 
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import io.github.newhoo.mysql.JavaToolHelper;
 import io.github.newhoo.mysql.i18n.ExplainBundle;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -21,11 +17,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_EXTRAS;
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_FILTER;
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL;
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER;
-import static io.github.newhoo.mysql.common.Constant.PROPERTIES_KEY_MYSQL_TYPES;
+import static io.github.newhoo.mysql.common.Constant.*;
 
 /**
  * SettingForm
@@ -63,7 +55,7 @@ public class SettingForm {
         this.projectSetting = projectSetting;
 
         mysqlExplainEnableCheckbox.setText(ExplainBundle.getMessage("plugin.setting.enable"));
-        if (!projectSetting.getExistMysqlJar() && project.isDefault()) {
+        if (!JavaToolHelper.existMysqlJar(project) && project.isDefault()) {
             mysqlExplainEnableCheckbox.setToolTipText(ExplainBundle.getMessage("plugin.setting.enableTip"));
         }
         mysqlShowSqlCheckBox.setText(ExplainBundle.getMessage("plugin.setting.printSQL"));
@@ -87,7 +79,7 @@ public class SettingForm {
 
         mysqlExplainEnableCheckbox.addItemListener(e -> setPreview());
         mysqlShowSqlCheckBox.addItemListener(e -> setPreview());
-        if (StringUtils.isEmpty(projectSetting.getAgentPath())) {
+        if (JavaToolHelper.getMySQLExplainAgentPath().isEmpty()) {
             return;
         }
         previewLabel.addMouseListener(new MouseAdapter() {
@@ -167,8 +159,8 @@ public class SettingForm {
         }
 
         StringBuilder sb = new StringBuilder();
-        String agentPath = projectSetting.getAgentPath();
-        if (StringUtils.isEmpty(agentPath)) {
+        String agentPath = JavaToolHelper.getMySQLExplainAgentPath();
+        if (agentPath.isEmpty()) {
             sb.append("Agent not found! Try check your project with mysql connector driver and reopen it.");
         } else {
             sb.append("\"").append("-javaagent:").append(agentPath).append("\"\n");

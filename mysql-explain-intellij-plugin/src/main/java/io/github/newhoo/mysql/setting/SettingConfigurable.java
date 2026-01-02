@@ -2,7 +2,7 @@ package io.github.newhoo.mysql.setting;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang3.StringUtils;
+import io.github.newhoo.mysql.JavaToolHelper;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nls.Capitalization;
 import org.jetbrains.annotations.Nullable;
@@ -41,12 +41,12 @@ public class SettingConfigurable implements Configurable {
 
     @Override
     public boolean isModified() {
-        return projectSetting.getEnableMySQLExplain() != settingForm.mysqlExplainEnableCheckbox.isSelected()
-                || projectSetting.getMysqlShowSql() != settingForm.mysqlShowSqlCheckBox.isSelected()
-                || !StringUtils.equals(projectSetting.getPrintSqlFilter(), settingForm.printSqlFilterTextField.getText())
-                || !StringUtils.equals(projectSetting.getMysqlFilter(), settingForm.mysqlFilterText.getText())
-                || !StringUtils.equals(projectSetting.getMysqlTypes(), settingForm.mysqlTypesText.getText())
-                || !StringUtils.equals(projectSetting.getMysqlExtras(), settingForm.mysqlExtrasText.getText());
+        return !String.valueOf(projectSetting.getEnableMySQLExplain()).equals(String.valueOf(settingForm.mysqlExplainEnableCheckbox.isSelected()))
+                || !String.valueOf(projectSetting.getMysqlShowSql()).equals(String.valueOf(settingForm.mysqlShowSqlCheckBox.isSelected()))
+                || !JavaToolHelper.equals(projectSetting.getPrintSqlFilter(), settingForm.printSqlFilterTextField.getText())
+                || !JavaToolHelper.equals(projectSetting.getMysqlFilter(), settingForm.mysqlFilterText.getText())
+                || !JavaToolHelper.equals(projectSetting.getMysqlTypes(), settingForm.mysqlTypesText.getText())
+                || !JavaToolHelper.equals(projectSetting.getMysqlExtras(), settingForm.mysqlExtrasText.getText());
     }
 
     @Override

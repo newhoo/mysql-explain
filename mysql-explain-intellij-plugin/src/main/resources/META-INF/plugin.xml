@@ -20,26 +20,13 @@
     ]]></description>
 
     <change-notes><![CDATA[
-        1.1.2
+        1.2.0
         <ul>
-            <li>fix exception in 2024.1;</li>
-        </ul>
-
-        1.1.1
-        <ul>
-            <li>fix agent injection bug;</li>
-            <li>fix compatibility problems</li>
-        </ul>
-
-        1.1.0
-        <ul>
-            <li>Enhance compatibility(support jdk8+, mysql-connector 5,6,8)</li>
-            <li>Separate log printing and explain execution</li>
-            <li>Optimize user-friendly configuration</li>
+            <li>Refactored implementation.</li>
+            <li>This plugin has been migrated to the RestfulBox plugin, which is recommended for use.</li>
             <br/>
-            <li>增强兼容性，支持jdk8+，支持mysql-connector 5、6、8</li>
-            <li>分离日志打印和Explain执行</li>
-            <li>优化配置，提示更友好</li>
+            <li>重构实现</li>
+            <li>该插件已迁移到 RestfulBox 插件，推荐使用</li>
         </ul>
       ]]>
     </change-notes>
@@ -55,7 +42,6 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <postStartupActivity implementation="io.github.newhoo.mysql.MyStartupActivity"/>
         <projectConfigurable instance="io.github.newhoo.mysql.setting.SettingConfigurable" displayName="MySQL Explain"/>
 
         <java.programPatcher implementation="io.github.newhoo.mysql.MysqlPreRunCheck"/>
