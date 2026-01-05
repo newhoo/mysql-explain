@@ -55,9 +55,6 @@ public class SettingForm {
         this.projectSetting = projectSetting;
 
         mysqlExplainEnableCheckbox.setText(ExplainBundle.getMessage("plugin.setting.enable"));
-        if (!JavaToolHelper.existMysqlJar(project) && project.isDefault()) {
-            mysqlExplainEnableCheckbox.setToolTipText(ExplainBundle.getMessage("plugin.setting.enableTip"));
-        }
         mysqlShowSqlCheckBox.setText(ExplainBundle.getMessage("plugin.setting.printSQL"));
         printSqlFilterTipLabel.setText(ExplainBundle.getMessage("plugin.setting.printSqlFilterTipLabel"));
 
