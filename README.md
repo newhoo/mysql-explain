@@ -2,6 +2,8 @@
 
 Auto execute mysql explain when execute sql in java project.
 
+_**State: The idea plugin has been migrated to the [RestfulBox](https://plugins.jetbrains.com/plugin/14723-restfulbox) plugin.**_
+
 ## Main functions
 
 - Auto print original mysql sql log.
