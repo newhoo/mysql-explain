@@ -12,7 +12,7 @@ plugins {
 }
 
 group 'io.github.newhoo.mysql'
-version '1.2.1'
+version '1.2.2'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -33,7 +33,7 @@ intellij {
 //    version.set('2020.3')
     version.set('2024.1')
     updateSinceUntilBuild.set(false)
-    downloadSources.set(true)
+    downloadSources.set(false)
     plugins.set(['java'])
     sandboxDir.set("${rootProject.rootDir}/idea-sandbox")
 }
