@@ -29,6 +29,9 @@ public final class MySQLExplain {
         if (conn == null || sql == null) {
             return;
         }
+        // 打印元信息
+        printConnectMetaData(conn);
+
         Log.debug("before explain: %s, %s", conn, sql);
         // 2023-08-23 8.x 特殊处理，使用toString()获取
         if (sql.startsWith("com.mysql.cj.jdbc.ClientPreparedStatement: ")) {
@@ -52,24 +55,25 @@ public final class MySQLExplain {
             Method Connection_createStatement = conn.getClass().getMethod("createStatement");
             Method Statement_executeQuery = Connection_createStatement.getReturnType().getMethod("executeQuery", String.class);
             Method Statement_close = Connection_createStatement.getReturnType().getMethod("close");
+
             Method ResultSet_next = Statement_executeQuery.getReturnType().getMethod("next");
             Method ResultSet_getString_Int = Statement_executeQuery.getReturnType().getMethod("getString", int.class);
             Method ResultSet_close = Statement_executeQuery.getReturnType().getMethod("close");
             Method ResultSet_getMetaData = Statement_executeQuery.getReturnType().getMethod("getMetaData");
-            Method MetaData_getColumnCount = ResultSet_getMetaData.getReturnType().getMethod("getColumnCount");
-            Method MetaData_getColumnName = ResultSet_getMetaData.getReturnType().getMethod("getColumnName", int.class);
+            Method ResultSetMetaData_getColumnCount = ResultSet_getMetaData.getReturnType().getMethod("getColumnCount");
+            Method ResultSetMetaData_getColumnName = ResultSet_getMetaData.getReturnType().getMethod("getColumnName", int.class);
 
             Object stmt = Connection_createStatement.invoke(conn);
-            Object resultSet = Statement_executeQuery.invoke(stmt, "EXPLAIN " + sql);
-            Object metaData = ResultSet_getMetaData.invoke(resultSet);
-            int columnCount = (int) MetaData_getColumnCount.invoke(metaData);
+            Object resultSet = Statement_executeQuery.invoke(stmt, (Config.useTraditionalFormat ? "EXPLAIN FORMAT=TRADITIONAL " : "EXPLAIN ") + sql);
+            Object resultSetMetaData = ResultSet_getMetaData.invoke(resultSet);
+            int columnCount = (int) ResultSetMetaData_getColumnCount.invoke(resultSetMetaData);
 
             // 头
             List<String> headerColumns = Stream.iterate(1, i -> i + 1)
                                                .limit(columnCount)
                                                .map(i -> {
                                                    try {
-                                                       return (String) MetaData_getColumnName.invoke(metaData, i);
+                                                       return (String) ResultSetMetaData_getColumnName.invoke(resultSetMetaData, i);
                                                    } catch (Exception e) {
                                                        return "error: " + e;
                                                    }
@@ -104,6 +108,43 @@ public final class MySQLExplain {
         }
     }
 
+    private static boolean printConnectMetaData = true;
+
+    /**
+     * 打印元信息
+     */
+    private static void printConnectMetaData(Object conn) {
+        if (printConnectMetaData) {
+            printConnectMetaData = false;
+            try {
+                Method Connection_getMetaData = conn.getClass().getMethod("getMetaData");
+                Object connectionMetaData = Connection_getMetaData.invoke(conn);
+                {
+                    Method DatabaseMetaData_getDatabaseProductName = Connection_getMetaData.getReturnType().getMethod("getDatabaseProductName");
+                    Method DatabaseMetaData_getDatabaseProductVersion = Connection_getMetaData.getReturnType().getMethod("getDatabaseProductVersion");
+                    Method DatabaseMetaData_getDriverName = Connection_getMetaData.getReturnType().getMethod("getDriverName");
+                    Method DatabaseMetaData_getDriverVersion = Connection_getMetaData.getReturnType().getMethod("getDriverVersion");
+                    Log.info("connection metadata(version): %s(%s) -- %s(%s)",
+                            DatabaseMetaData_getDatabaseProductName.invoke(connectionMetaData),
+                            DatabaseMetaData_getDatabaseProductVersion.invoke(connectionMetaData),
+                            DatabaseMetaData_getDriverName.invoke(connectionMetaData),
+                            DatabaseMetaData_getDriverVersion.invoke(connectionMetaData)
+                    );
+                }
+                if (Config.isDebug) {
+                    Method DatabaseMetaData_getUserName = Connection_getMetaData.getReturnType().getMethod("getUserName");
+                    Method DatabaseMetaData_getURL = Connection_getMetaData.getReturnType().getMethod("getURL");
+                    Log.info("connection metadata(URL): %s -- %s",
+                            DatabaseMetaData_getURL.invoke(connectionMetaData),
+                            DatabaseMetaData_getUserName.invoke(connectionMetaData)
+                    );
+                }
+            } catch (Exception e) {
+                Log.error(e, "print connection metadata exception: %s", e.toString());
+            }
+        }
+    }
+
     /**
      * 前置检查，检查是否执行计划
      */
@@ -113,7 +154,7 @@ public final class MySQLExplain {
             Log.debug("unsupported explain: sql.split(\" \", 2) return empty");
             return false;
         }
-        if (StringUtils.containsAny(sql, Config.filterSqlKeywords)) {
+        if (Arrays.asList(Config.filterSqlKeywords).contains("*") || StringUtils.containsAny(sql, Config.filterSqlKeywords)) {
             Log.debug("unsupported explain - filter out by [before] keywords: %s", Arrays.asList(Config.filterSqlKeywords));
             return false;
         }

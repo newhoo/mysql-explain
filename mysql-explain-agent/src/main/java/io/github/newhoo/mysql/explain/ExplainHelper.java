@@ -2,6 +2,7 @@ package io.github.newhoo.mysql.explain;
 
 import github.clyoudu.consoletable.ConsoleTable;
 import github.clyoudu.consoletable.table.Cell;
+import io.github.newhoo.mysql.common.Config;
 import io.github.newhoo.mysql.common.Log;
 
 import java.util.List;
@@ -17,7 +18,11 @@ class ExplainHelper {
 
     static void printSQL(String sql, boolean showSQL) {
         if (showSQL) {
-            System.out.println("EXECUTE SQL: \nEXPLAIN " + sql);
+            if (Config.isDebug) {
+                Log.debug("EXECUTE SQL: \n%s", (Config.useTraditionalFormat ? "EXPLAIN FORMAT=TRADITIONAL " : "EXPLAIN ") + sql);
+            } else {
+                Log.info("EXECUTE SQL: \n%s", sql);
+            }
         }
     }
 

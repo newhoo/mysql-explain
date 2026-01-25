@@ -3,7 +3,7 @@ package io.github.newhoo.mysql.common;
 public class Log {
 
     public static void debug(String msg, Object... args) {
-        if (isDebug()) {
+        if (Config.isDebug) {
             System.out.printf("[mysql-explain] " + msg + "\n", args);
         }
     }
@@ -15,9 +15,5 @@ public class Log {
     public static void error(Exception e, String msg, Object... args) {
         System.err.printf("[mysql-explain] " + msg + "\n", args);
         e.printStackTrace();
-    }
-
-    private static boolean isDebug() {
-        return System.getProperty("debug") != null;
     }
 }
