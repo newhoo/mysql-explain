@@ -47,7 +47,7 @@ public final class MySQLExplain {
 
         try {
             // 前置处理：条件过滤
-            if (!processBefore(sql)) {
+            if (!processBeforeExplain(sql)) {
                 return;
             }
 
@@ -148,8 +148,8 @@ public final class MySQLExplain {
     /**
      * 前置检查，检查是否执行计划
      */
-    private static boolean processBefore(String sql) {
-        String[] s = sql.substring(0, 10).split(" ", 2);
+    private static boolean processBeforeExplain(String sql) {
+        String[] s = sql.split(" ", 2);
         if (StringUtils.isEmptyArray(s)) {
             Log.debug("unsupported explain: sql.split(\" \", 2) return empty");
             return false;

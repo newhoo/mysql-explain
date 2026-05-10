@@ -123,6 +123,7 @@ public final class Config {
             Set<String> showSQLFilterKeywordSet = new LinkedHashSet<>();
             putSplit(showSQLFilterKeywordSet, FILE_PROPERTIES.getProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER, ""), PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER, "file");
             putSplit(showSQLFilterKeywordSet, System.getProperty(PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER), PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER, "jvm parameter");
+            putSplit(showSQLFilterKeywordSet, System.getenv(PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER), PROPERTIES_KEY_MYSQL_SHOW_SQL_FILTER, "environment");
             showSQLFilterKeywords = showSQLFilterKeywordSet.toArray(new String[0]);
         }
 
